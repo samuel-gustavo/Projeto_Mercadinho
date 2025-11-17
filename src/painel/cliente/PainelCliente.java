@@ -29,26 +29,11 @@ public class PainelCliente extends javax.swing.JFrame {
         initComponents();
         
         setLocationRelativeTo(null);
-        atualizarTabela();
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F4"), "Sair");
-
-        getRootPane().getActionMap().put("Sair", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
     }
     
     private void atualizarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) jtCliente.getModel();
-        modelo.setRowCount(0); // limpa tabela
-
-        for (Cliente c : BancoDados.listaClientes) {
-            modelo.addRow(new Object[]{c.getCpf(), c.getNome(), c.getTelefone(), c.getEndereco()});
-        }
+        
     }
 
     /**
@@ -183,16 +168,7 @@ public class PainelCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarClienteActionPerformed
-        CadastrarCliente cadastrarCliente = new CadastrarCliente(BancoDados.listaClientes);
-        cadastrarCliente.setVisible(true);
         
-        cadastrarCliente.addWindowListener(
-            new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosed(java.awt.event.WindowEvent e) {
-                atualizarTabela();
-            }
-        });
     }//GEN-LAST:event_btnCadastrarClienteActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed

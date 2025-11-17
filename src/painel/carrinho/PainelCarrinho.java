@@ -31,44 +31,11 @@ public class PainelCarrinho extends javax.swing.JFrame {
         initComponents();
         
         setLocationRelativeTo(null);
-        atualizarTabela();
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F1"), "Cadastrar_Venda");
-
-        getRootPane().getActionMap().put("Cadastrar_Venda", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AdicionandoItensCarrinho cadastrarItemCarrinho = new AdicionandoItensCarrinho(BancoDados.listaProdutos);
-                cadastrarItemCarrinho.setVisible(true);
-                cadastrarItemCarrinho.addWindowListener(
-                    new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosed(java.awt.event.WindowEvent e) {
-                        atualizarTabela();
-                    }
-                });
-            }
-        });
-        
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F5"), "Sair");
-
-        getRootPane().getActionMap().put("Sair", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
     }
     
     private void atualizarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) jtCarrinho.getModel();
-        modelo.setRowCount(0); // limpa tabela
-
-        for (Produto p : BancoDados.listaCarrinho) {
-            modelo.addRow(new Object[]{p.getCodigo(), p.getNome(), p.getDescricao(), p.getQuatidade(), p.getValorUnitario()});
-        }
+        
     }
 
     /**
@@ -222,15 +189,7 @@ public class PainelCarrinho extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarItemActionPerformed
-        AdicionandoItensCarrinho cadastrarVenda = new AdicionandoItensCarrinho(BancoDados.listaCarrinho);
-        cadastrarVenda.setVisible(true);
-        cadastrarVenda.addWindowListener(
-            new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosed(java.awt.event.WindowEvent e) {
-                atualizarTabela();
-            }
-        });
+        
     }//GEN-LAST:event_btnAdicionarItemActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed

@@ -12,14 +12,12 @@ package classesutilitarias;
 public class Produto {
     
     private long codigo;
-    private String nome;
     private String descricao;
     private int quatidade;
     private double valorUnitario;
 
-    public Produto(long codigo, String nome, String descricao, int quatidade, double valorUnitario) {
-        this.codigo = codigo;
-        this.nome = nome;
+    public Produto(long codigo, String descricao, int quatidade, double valorUnitario) {
+        this.codigo = codigo;     
         this.descricao = descricao;
         this.quatidade = quatidade;
         this.valorUnitario = valorUnitario;
@@ -55,18 +53,5 @@ public class Produto {
 
     public void setValorUnitario(double valorUnitario) {
         this.valorUnitario = valorUnitario;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public String toString() {
-        return nome; //To change body of generated methods, choose Tools | Templates.
     }
 }

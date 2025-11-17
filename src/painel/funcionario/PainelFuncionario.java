@@ -42,12 +42,7 @@ public class PainelFuncionario extends javax.swing.JFrame {
     }
     
     private void atualizarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) jtFuncionario.getModel();
-        modelo.setRowCount(0); // limpa tabela
-
-        for (Funcionario f : BancoDados.listaFuncionarios) {
-            modelo.addRow(new Object[]{f.getCpf(), f.getNome()});
-        }
+        
     }
 
     /**
@@ -180,15 +175,7 @@ public class PainelFuncionario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarFuncionarioActionPerformed
-        CadastrarFuncionario cadastrarFuncionario = new CadastrarFuncionario(BancoDados.listaFuncionarios);
-        cadastrarFuncionario.setVisible(true);
-        cadastrarFuncionario.addWindowListener(
-            new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosed(java.awt.event.WindowEvent e) {
-                atualizarTabela();
-            }
-        });
+        
     }//GEN-LAST:event_btnCadastrarFuncionarioActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed

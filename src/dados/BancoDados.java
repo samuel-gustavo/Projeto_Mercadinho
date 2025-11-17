@@ -10,6 +10,7 @@ import classesutilitarias.Funcionario;
 import classesutilitarias.Produto;
 import classesutilitarias.Venda;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -17,9 +18,8 @@ import java.util.ArrayList;
  */
 public class BancoDados {
     
-    public static ArrayList<Funcionario> listaFuncionarios = new ArrayList<>();
-    public static ArrayList<Cliente> listaClientes = new ArrayList<>();
-    public static ArrayList<Produto> listaProdutos = new ArrayList<>();
-    public static ArrayList<Produto> listaCarrinho = new ArrayList<>();
-    public static ArrayList<Venda> listaVendas = new ArrayList<>();
+    HashMap<String, Cliente> listaClientes = new HashMap<>();
+    HashMap<String, Funcionario> listaFuncionarios = new HashMap<>();
+    HashMap<Long, Produto> listaProdutos = new HashMap<>();
+    HashMap<Integer, Venda> listaVendas = new HashMap<>();
 }

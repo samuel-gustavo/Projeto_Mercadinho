@@ -243,7 +243,7 @@ public class CadastrarProduto extends javax.swing.JFrame {
         String texto = jtValorUnitario.getText().replaceAll("[^0-9,]", "").replace(",", ".");
         double valorUnitario = Double.parseDouble(texto);
         
-        Produto p = new Produto(codigo, nome, descricao, quantidade, valorUnitario);
+        Produto p = new Produto(codigo, descricao, quantidade, valorUnitario);
         
         listaProdutos.add(p);
         JOptionPane.showMessageDialog(null, "Produto Cadastrado com Sucesso!");

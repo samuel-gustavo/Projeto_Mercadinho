@@ -36,87 +36,18 @@ public class AdicionandoItensCarrinho extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         
-        jtCodigoProduto.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                pesquisarProduto();
-            }
-
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                pesquisarProduto();
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                pesquisarProduto();
-            }
-        });
-        
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F1"), "Adicionar_Produto");
-
-        getRootPane().getActionMap().put("Adicionar_Produto", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                adicionarProduto();
-            }
-        });
-        
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F2"), "Sair");
-
-        getRootPane().getActionMap().put("Sair", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                BancoDados.listaCarrinho.clear();
-                BancoDados.listaCarrinho.addAll(listaCarrinhoAuxuliar);
-            }
-        });
     }
     
     private void atualizarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) jtProdutoCarrinho.getModel();
-        modelo.setRowCount(0); // limpa tabela
-
-        for (Produto p : BancoDados.listaProdutos) {
-            modelo.addRow(new Object[]{p.getCodigo(), p.getDescricao(), p.getQuatidade(), p.getValorUnitario()});
-        }
+        
     }
     
     private void pesquisarProduto() {
-        DefaultTableModel modelo = (DefaultTableModel) jtProdutoCarrinho.getModel();
-        modelo.setRowCount(0); // limpa tabela
         
-        String codigoPesquisa = jtCodigoProduto.getText();
-        
-        for(Produto p : BancoDados.listaProdutos) {
-            if(!jtCodigoProduto.getText().isEmpty()) {
-               String codigo = String.valueOf(p.getCodigo());
-               if(codigo.startsWith(codigoPesquisa)) {
-                   modelo.addRow(new Object[]{p.getCodigo(), p.getNome(), p.getDescricao(), p.getValorUnitario()});
-               }   
-            }
-        }
     }
     
     private void adicionarProduto() {
-        boolean confirmacao = false;
-        if(!jtCodigoProduto.getText().isEmpty()) {
-            long codigo = Long.parseLong(jtCodigoProduto.getText());
-            for(Produto p : BancoDados.listaProdutos) {
-                if(codigo == p.getCodigo()) {
-                    this.listaCarrinhoAuxuliar.add(p);
-                    confirmacao = true;
-                    JOptionPane.showMessageDialog(null, "Produto Adicionado ao Carrinho!");
-                }
-            }
-        }
         
-        if(!confirmacao) {
-            JOptionPane.showMessageDialog(null, "Código do Produto Inexistente!");
-        }
     }
 
     /**
@@ -265,9 +196,7 @@ public class AdicionandoItensCarrinho extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-        dispose();
-        BancoDados.listaCarrinho.clear();
-        BancoDados.listaCarrinho.addAll(listaCarrinhoAuxuliar);
+        
     }//GEN-LAST:event_btnSairActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
