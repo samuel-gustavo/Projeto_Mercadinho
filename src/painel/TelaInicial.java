@@ -117,7 +117,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jPanel18 = new javax.swing.JPanel();
         jPanel19 = new javax.swing.JPanel();
-        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jPanel17 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -179,7 +179,7 @@ public class TelaInicial extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
 
         getContentPane().add(jPanel1);
@@ -273,8 +273,8 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel5.add(jPanel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 2, 110));
 
-        jLabel21.setText("F1- Iniciar Venda");
-        jPanel5.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+        jLabel22.setText("F1- Iniciar Venda");
+        jPanel5.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         jPanel2.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 480, 570, 110));
 
@@ -396,7 +396,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel2.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 690, 110));
 
         getContentPane().add(jPanel2);
-        jPanel2.setBounds(0, 90, 1375, 1900);
+        jPanel2.setBounds(0, 90, 1375, 620);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -455,7 +455,7 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

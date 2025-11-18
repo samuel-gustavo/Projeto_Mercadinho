@@ -11,23 +11,23 @@ package classesutilitarias;
  */
 public class Produto {
     
-    private long codigo;
+    private String codigo;
     private String descricao;
     private int quatidade;
     private double valorUnitario;
 
-    public Produto(long codigo, String descricao, int quatidade, double valorUnitario) {
+    public Produto(String codigo, String descricao, int quatidade, double valorUnitario) {
         this.codigo = codigo;     
         this.descricao = descricao;
         this.quatidade = quatidade;
         this.valorUnitario = valorUnitario;
     }
 
-    public long getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(long codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
