@@ -5,7 +5,7 @@
  */
 package painel.cliente;
 
-import classesutilitarias.Cliente;
+import utilitarias.classes.Cliente;
 import dados.BancoDados;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;

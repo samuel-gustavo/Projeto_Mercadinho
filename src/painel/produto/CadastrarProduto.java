@@ -5,12 +5,14 @@
  */
 package painel.produto;
 
-import classesutilitarias.Produto;
+import utilitarias.classes.Produto;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultFormatterFactory;
@@ -20,7 +22,7 @@ import javax.swing.text.NumberFormatter;
  *
  * @author samuel
  */
-public class CadastrarProduto extends javax.swing.JFrame {
+public class CadastrarProduto extends javax.swing.JDialog {
 
     /**
      * Creates new form CadastrarProduto
@@ -28,7 +30,8 @@ public class CadastrarProduto extends javax.swing.JFrame {
     
     ArrayList<Produto> listaProdutos;
     
-    public CadastrarProduto(ArrayList<Produto> listaProdutos) {
+    public CadastrarProduto(JFrame parent) {
+        super(parent, true);
         initComponents();
         
         setLocationRelativeTo(null);
@@ -52,6 +55,8 @@ public class CadastrarProduto extends javax.swing.JFrame {
         jtaDescricao.setText("");
         jsQuantidade.setValue(0);
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,7 +78,7 @@ public class CadastrarProduto extends javax.swing.JFrame {
         jtCodigo = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jtCodigo1 = new javax.swing.JTextField();
+        jtValorUnitario = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
@@ -162,14 +167,14 @@ public class CadastrarProduto extends javax.swing.JFrame {
         jLabel6.setText("Valor Unitário");
         jPanel5.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
-        jtCodigo1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jtCodigo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCodigo1.addActionListener(new java.awt.event.ActionListener() {
+        jtValorUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtValorUnitario.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtValorUnitario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtCodigo1ActionPerformed(evt);
+                jtValorUnitarioActionPerformed(evt);
             }
         });
-        jPanel5.add(jtCodigo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
+        jPanel5.add(jtValorUnitario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         jPanel6.setBackground(new java.awt.Color(102, 153, 0));
         jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -278,9 +283,9 @@ public class CadastrarProduto extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jtCodigoActionPerformed
 
-    private void jtCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigo1ActionPerformed
+    private void jtValorUnitarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtValorUnitarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jtCodigo1ActionPerformed
+    }//GEN-LAST:event_jtValorUnitarioActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrar;
@@ -301,7 +306,7 @@ public class CadastrarProduto extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jsQuantidade;
     private javax.swing.JTextField jtCodigo;
-    private javax.swing.JTextField jtCodigo1;
+    private javax.swing.JTextField jtValorUnitario;
     private javax.swing.JTextArea jtaDescricao;
     // End of variables declaration//GEN-END:variables
 }

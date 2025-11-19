@@ -5,7 +5,7 @@
  */
 package painel.funcionario;
 
-import classesutilitarias.Funcionario;
+import utilitarias.classes.Funcionario;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;

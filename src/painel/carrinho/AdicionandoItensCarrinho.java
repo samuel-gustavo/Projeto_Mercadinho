@@ -5,10 +5,10 @@
  */
 package painel.carrinho;
 
-import classesutilitarias.Cliente;
-import classesutilitarias.Funcionario;
-import classesutilitarias.Produto;
-import classesutilitarias.Venda;
+import utilitarias.classes.Cliente;
+import utilitarias.classes.Funcionario;
+import utilitarias.classes.Produto;
+import utilitarias.classes.Venda;
 import dados.BancoDados;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;

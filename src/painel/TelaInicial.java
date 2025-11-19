@@ -5,17 +5,29 @@
  */
 package painel;
 
-import classesutilitarias.Venda;
+import utilitarias.classes.Produto;
+import utilitarias.classes.Venda;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import painel.produto.PainelProduto;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import modelos.ModeloTabela;
 import painel.cliente.PainelCliente;
 import painel.funcionario.PainelFuncionario;
 import painel.carrinho.PainelCarrinho;
+import utilitarias.sistema.ControleAtalhos;
 
 /**
  *
@@ -34,55 +46,36 @@ public class TelaInicial extends javax.swing.JFrame {
         this.setSize(1375, 725);
         this.setResizable(false);
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F1"), "Carrinho");
-
-        getRootPane().getActionMap().put("Carrinho", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new PainelCarrinho().setVisible(true);
-            }
-        });
+        List<Produto> listaProdutos = new ArrayList<>();
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F2"), "Produto");
-
-        getRootPane().getActionMap().put("Produto", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new PainelProduto().setVisible(true);
+        for(int i = 0; i < 30; i++) {
+            if(i % 2 == 0) {
+                listaProdutos.add(new Produto("123", "Arroz Banco", 10, 32.50));
+            } else {
+                listaProdutos.add(new Produto("126", "Feijão Banco", 5, 32.50));
             }
-        });
+        }
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F3"), "Cliente");
-
-        getRootPane().getActionMap().put("Cliente", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new PainelCliente().setVisible(true);
-            }
-        });
+        ModeloTabela<Produto> mt = new ModeloTabela<>(
+                new String[]{"Código", "Descrição", "Quantidade"},
+                listaProdutos,
+                p -> new Object[]{
+                    p.getCodigo(),
+                    p.getDescricao(),
+                    p.getQuatidade()
+                }
+        );
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F4"), "Funcionario");
-
-        getRootPane().getActionMap().put("Funcionario", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new PainelFuncionario().setVisible(true);
-            }
-        });
+        jtProdutos.setModel(mt);
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F5"), "Sair");
-
-        getRootPane().getActionMap().put("Sair", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        ModeloTabela.reconfigurarModelo(jtProdutos);
+        
+        // Ajustando Colunas
+//        ModeloTabela.ajustarColuna(jtProdutos, 0, 70);
+//        ModeloTabela.ajustarColuna(jtProdutos, 1, 143);
+//        ModeloTabela.ajustarColuna(jtProdutos, 2, 70);
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> new PainelProduto(this).setVisible(true));
     }
 
     /**
@@ -100,7 +93,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        jlImagemCactoyce = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -109,6 +102,8 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel16 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtProdutos = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
@@ -155,13 +150,13 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel6.setOpaque(false);
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Cactoyce_Menor.png"))); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+        jlImagemCactoyce.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Cactoyce_Menor.png"))); // NOI18N
+        jlImagemCactoyce.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
+                jlImagemCactoyceMouseClicked(evt);
             }
         });
-        jPanel6.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+        jPanel6.add(jlImagemCactoyce, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 40)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -220,24 +215,84 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel4.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 30));
 
+        jtProdutos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jtProdutos.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jtProdutos);
+        if (jtProdutos.getColumnModel().getColumnCount() > 0) {
+            jtProdutos.getColumnModel().getColumn(0).setResizable(false);
+            jtProdutos.getColumnModel().getColumn(1).setResizable(false);
+            jtProdutos.getColumnModel().getColumn(2).setResizable(false);
+        }
+
+        jPanel4.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, 26, 335, 305));
+
         jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 330, 330));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel16.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel16.setText("F5- Painel de Clientes");
         jPanel5.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, -1, -1));
 
+        jLabel17.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel17.setText("F6- Sair do Sistema");
         jPanel5.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(422, 20, -1, -1));
 
+        jLabel18.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel18.setText("F2- Cancelar Venda");
         jPanel5.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
 
+        jLabel19.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel19.setText("F3- Painel de Produtos");
         jPanel5.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 20, -1, -1));
 
+        jLabel20.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel20.setText("F4- Painel de Funcionários");
         jPanel5.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, -1, -1));
 
@@ -273,6 +328,7 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel5.add(jPanel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 2, 110));
 
+        jLabel22.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel22.setText("F1- Iniciar Venda");
         jPanel5.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
@@ -401,10 +457,10 @@ public class TelaInicial extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+    private void jlImagemCactoyceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlImagemCactoyceMouseClicked
         ImageIcon imagem = new ImageIcon("/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/icons/Cactoyce.png");
         JOptionPane.showMessageDialog(null, "", "Cactoyce --> Dona do Negócio", JOptionPane.INFORMATION_MESSAGE, imagem);
-    }//GEN-LAST:event_jLabel2MouseClicked
+    }//GEN-LAST:event_jlImagemCactoyceMouseClicked
 
     /**
      * @param args the command line arguments
@@ -453,7 +509,6 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
@@ -485,5 +540,8 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jlImagemCactoyce;
+    private javax.swing.JTable jtProdutos;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,7 +5,7 @@
  */
 package painel.cliente;
 
-import classesutilitarias.Cliente;
+import utilitarias.classes.Cliente;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;

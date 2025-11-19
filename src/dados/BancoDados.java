@@ -5,10 +5,10 @@
  */
 package dados;
 
-import classesutilitarias.Cliente;
-import classesutilitarias.Funcionario;
-import classesutilitarias.Produto;
-import classesutilitarias.Venda;
+import utilitarias.classes.Cliente;
+import utilitarias.classes.Funcionario;
+import utilitarias.classes.Produto;
+import utilitarias.classes.Venda;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,6 +20,6 @@ public class BancoDados {
     
     HashMap<String, Cliente> listaClientes = new HashMap<>();
     HashMap<String, Funcionario> listaFuncionarios = new HashMap<>();
-    HashMap<Long, Produto> listaProdutos = new HashMap<>();
+    HashMap<String, Produto> listaProdutos = new HashMap<>();
     HashMap<Integer, Venda> listaVendas = new HashMap<>();
 }

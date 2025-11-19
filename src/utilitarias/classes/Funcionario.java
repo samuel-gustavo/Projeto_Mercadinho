@@ -3,24 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package classesutilitarias;
+package utilitarias.classes;
 
 /**
  *
  * @author samuel
  */
-public class Cliente {
-    
+public class Funcionario {
+ 
     private String cpf;
     private String nome;
-    private String telefone;
-    private String endereco;
 
-    public Cliente(String cpf, String nome, String telefone, String endereco) {
+    public Funcionario(String cpf, String nome) {
         this.cpf = cpf;
         this.nome = nome;
-        this.telefone = telefone;
-        this.endereco = endereco;
     }
     
     public String getCpf() {
@@ -37,22 +33,6 @@ public class Cliente {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     @Override
