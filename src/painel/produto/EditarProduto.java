@@ -5,17 +5,59 @@
  */
 package painel.produto;
 
+import dados.BancoDados;
+import java.util.HashMap;
+import javax.swing.JFrame;
+import utilitarias.classes.Produto;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.ControleAtalhos;
+
 /**
  *
  * @author samuel
  */
-public class EditarProduto extends javax.swing.JFrame {
+public class EditarProduto extends javax.swing.JDialog {
 
     /**
      * Creates new form EditarProduto
      */
-    public EditarProduto() {
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    Produto produto;
+    
+    HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
+        put("F1", () -> editarValor());
+        put("F2", () -> sairPainelEditar());
+    }};
+    
+    public EditarProduto(JFrame parent, Produto produto) {
+        super(parent, true);
         initComponents();
+        
+        setLocationRelativeTo(null);
+        
+        this.produto = produto;
+        this.colocarValoresNosCampos(produto);
+        ControleAtalhos.passadorDeCampoComEnter(jtEditCodigo, jtEditValorUnitario, jsEditQuantidade, jtaEditDescricao, btnEditar);
+    }
+    
+    private void colocarValoresNosCampos(Produto produto) {
+        jtEditCodigo.setText(produto.getCodigo());
+        jtEditValorUnitario.setText(produto.getValorUnitario());
+        jsEditQuantidade.setValue(produto.getQuatidade());
+        jtaEditDescricao.setText(produto.getDescricao());
+    }
+    
+    private void editarValor() {
+        String codigo = jtEditCodigo.getText();
+        String valorUnitario = jtEditValorUnitario.getText();
+        int quantidade = (Integer) jsEditQuantidade.getValue();
+        String descricao = jtaEditDescricao.getText();
+        
+        CRUDHashMap.editarItem(this, listaProdutosHashMap, produto.getCodigo(), codigo, new Produto(codigo, descricao, quantidade, valorUnitario));
+    }
+    
+    private void sairPainelEditar() {
+        dispose();
     }
 
     /**
@@ -31,24 +73,25 @@ public class EditarProduto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        btnCadastrar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jtCodigo = new javax.swing.JTextField();
+        jtEditCodigo = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jtCodigo1 = new javax.swing.JTextField();
+        jtEditValorUnitario = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        jsQuantidade = new javax.swing.JSpinner();
+        jsEditQuantidade = new javax.swing.JSpinner();
         jPanel8 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtaDescricao = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jtaEditDescricao = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(51, 153, 0));
@@ -77,20 +120,20 @@ public class EditarProduto extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnCadastrar.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar.setText("Cadastrar");
-        btnCadastrar.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
-        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+        btnEditar.setBackground(new java.awt.Color(102, 153, 0));
+        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditar.setText("Editar (F1)");
+        btnEditar.setBorder(null);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrarActionPerformed(evt);
+                btnEditarActionPerformed(evt);
             }
         });
 
         btnSair.setBackground(new java.awt.Color(102, 153, 0));
         btnSair.setForeground(new java.awt.Color(255, 255, 255));
         btnSair.setText("Sair (F2)");
-        btnSair.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
+        btnSair.setBorder(null);
         btnSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSairActionPerformed(evt);
@@ -107,14 +150,14 @@ public class EditarProduto extends javax.swing.JFrame {
         jLabel2.setText("Código");
         jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
-        jtCodigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jtCodigo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCodigo.addActionListener(new java.awt.event.ActionListener() {
+        jtEditCodigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtEditCodigo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtEditCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtCodigoActionPerformed(evt);
+                jtEditCodigoActionPerformed(evt);
             }
         });
-        jPanel4.add(jtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
+        jPanel4.add(jtEditCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         jPanel5.setBackground(new java.awt.Color(102, 153, 0));
         jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -126,14 +169,14 @@ public class EditarProduto extends javax.swing.JFrame {
         jLabel6.setText("Valor Unitário");
         jPanel5.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
-        jtCodigo1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jtCodigo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCodigo1.addActionListener(new java.awt.event.ActionListener() {
+        jtEditValorUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtEditValorUnitario.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtEditValorUnitario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtCodigo1ActionPerformed(evt);
+                jtEditValorUnitarioActionPerformed(evt);
             }
         });
-        jPanel5.add(jtCodigo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
+        jPanel5.add(jtEditValorUnitario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         jPanel6.setBackground(new java.awt.Color(102, 153, 0));
         jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -149,8 +192,8 @@ public class EditarProduto extends javax.swing.JFrame {
         jPanel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jsQuantidade.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel7.add(jsQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 110, 30));
+        jsEditQuantidade.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel7.add(jsEditQuantidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 110, 30));
 
         jPanel6.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, 144, 50));
 
@@ -159,16 +202,42 @@ public class EditarProduto extends javax.swing.JFrame {
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel8.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 258, -1, -1));
 
-        jtaDescricao.setColumns(20);
-        jtaDescricao.setRows(5);
-        jtaDescricao.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel8.add(jtaDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 314, -1));
-
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Descrição do Produto");
         jPanel8.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 40));
+
+        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jtaEditDescricao.setColumns(20);
+        jtaEditDescricao.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jtaEditDescricao.setLineWrap(true);
+        jtaEditDescricao.setRows(5);
+        jtaEditDescricao.setToolTipText("");
+        jtaEditDescricao.setWrapStyleWord(true);
+        jtaEditDescricao.setBorder(null);
+        jtaEditDescricao.setPreferredSize(new java.awt.Dimension(240, 85));
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaEditDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaEditDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
+        );
+
+        jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 87));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -176,18 +245,18 @@ public class EditarProduto extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(114, 114, 114)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)
-                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(97, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(124, 124, 124))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,7 +271,7 @@ public class EditarProduto extends javax.swing.JFrame {
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
@@ -229,24 +298,24 @@ public class EditarProduto extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+    private void jtEditCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtEditCodigoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtEditCodigoActionPerformed
 
-    }//GEN-LAST:event_btnCadastrarActionPerformed
+    private void jtEditValorUnitarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtEditValorUnitarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtEditValorUnitarioActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         dispose();
     }//GEN-LAST:event_btnSairActionPerformed
 
-    private void jtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtCodigoActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
 
-    private void jtCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigo1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtCodigo1ActionPerformed
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCadastrar;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -261,10 +330,11 @@ public class EditarProduto extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jsQuantidade;
-    private javax.swing.JTextField jtCodigo;
-    private javax.swing.JTextField jtCodigo1;
-    private javax.swing.JTextArea jtaDescricao;
+    private javax.swing.JSpinner jsEditQuantidade;
+    private javax.swing.JTextField jtEditCodigo;
+    private javax.swing.JTextField jtEditValorUnitario;
+    private javax.swing.JTextArea jtaEditDescricao;
     // End of variables declaration//GEN-END:variables
 }

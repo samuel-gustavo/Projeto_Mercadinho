@@ -14,9 +14,9 @@ public class Produto {
     private String codigo;
     private String descricao;
     private int quatidade;
-    private double valorUnitario;
+    private String valorUnitario;
 
-    public Produto(String codigo, String descricao, int quatidade, double valorUnitario) {
+    public Produto(String codigo, String descricao, int quatidade, String valorUnitario) {
         this.codigo = codigo;     
         this.descricao = descricao;
         this.quatidade = quatidade;
@@ -47,11 +47,11 @@ public class Produto {
         this.quatidade = quatidade;
     }
 
-    public double getValorUnitario() {
+    public String getValorUnitario() {
         return valorUnitario;
     }
 
-    public void setValorUnitario(double valorUnitario) {
+    public void setValorUnitario(String valorUnitario) {
         this.valorUnitario = valorUnitario;
     }
 }

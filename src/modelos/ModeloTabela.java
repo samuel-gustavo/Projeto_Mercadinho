@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -76,7 +77,22 @@ public class ModeloTabela<T> extends AbstractTableModel {
         return extrator.apply(listaItens.get(rowIndex))[columnIndex];
     }
     
+    public List<T> getLista() {
+        return listaItens;
+    }
+    
+    public T getItem(int linha) {
+        if (linha < 0 || linha >= listaItens.size()) {
+            return null;
+        }
+        return listaItens.get(linha);
+    }
+    
     public static void reconfigurarModelo(JTable tabela) {
+        
+        // Retirando atalho padrão da tabela
+        tabela.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke("F2"), "none");
         
         // Configurando o Header da Tabela
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -121,7 +137,7 @@ public class ModeloTabela<T> extends AbstractTableModel {
                 
                 c.setFont(new Font("Dialog", Font.BOLD, 12));
                 c.setForeground(Color.BLACK);
-                ((DefaultTableCellRenderer) c).setHorizontalAlignment(SwingConstants.LEADING);
+                ((DefaultTableCellRenderer) c).setHorizontalAlignment(SwingConstants.CENTER);
 
                 if (!isSelected) {
                     if (row % 2 == 0) {
@@ -149,8 +165,6 @@ public class ModeloTabela<T> extends AbstractTableModel {
     }
     
     public static void ajustarColuna(JTable tabela, int coluna, int largura) {
-//        tabela.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
         TableColumn col = tabela.getColumnModel().getColumn(coluna);
 
         col.setPreferredWidth(largura);

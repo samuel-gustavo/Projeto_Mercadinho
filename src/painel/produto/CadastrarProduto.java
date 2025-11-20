@@ -5,10 +5,13 @@
  */
 package painel.produto;
 
+import dados.BancoDados;
 import utilitarias.classes.Produto;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -17,6 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.CampoMoedaFormatada;
+import utilitarias.sistema.ControleAtalhos;
 
 /**
  *
@@ -28,7 +34,11 @@ public class CadastrarProduto extends javax.swing.JDialog {
      * Creates new form CadastrarProduto
      */
     
-    ArrayList<Produto> listaProdutos;
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
+        put("F1", () -> adicionarProduto());
+        put("F2", () -> sairPainelCadastro());
+    }};
     
     public CadastrarProduto(JFrame parent) {
         super(parent, true);
@@ -36,27 +46,33 @@ public class CadastrarProduto extends javax.swing.JDialog {
         
         setLocationRelativeTo(null);
         
-        this.listaProdutos = listaProdutos;
+        CampoMoedaFormatada.aplicarFormatoMoeda(jtValorUnitario);
+        jtValorUnitario.setText("R$ 0,00");
         
-        
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                 .put(KeyStroke.getKeyStroke("F2"), "Sair");
-
-        getRootPane().getActionMap().put("Sair", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        ControleAtalhos.addKeyBindings(getRootPane(), atalhos);
+        ControleAtalhos.passadorDeCampoComEnter(jtCodigo, jtValorUnitario, jsQuantidade, jtaDescricao, btnCadastrar);
     }
     
     private void limparCampos() {
         jtCodigo.setText("");
+        jtValorUnitario.setText("");
         jtaDescricao.setText("");
         jsQuantidade.setValue(0);
     }
     
+    private void adicionarProduto() {
+        String codigo = jtCodigo.getText();
+        String valorUnitario = jtValorUnitario.getText();
+        int quantidade = (int) jsQuantidade.getValue();
+        String descricao = jtaDescricao.getText();
+        
+        CRUDHashMap.adicionarItem(listaProdutosHashMap, codigo, new Produto(codigo, descricao, quantidade, valorUnitario));
+        limparCampos();
+    }
     
+    private void sairPainelCadastro() {
+        dispose();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -85,8 +101,9 @@ public class CadastrarProduto extends javax.swing.JDialog {
         jsQuantidade = new javax.swing.JSpinner();
         jPanel8 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtaDescricao = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jtaDescricao = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -120,8 +137,8 @@ public class CadastrarProduto extends javax.swing.JDialog {
 
         btnCadastrar.setBackground(new java.awt.Color(102, 153, 0));
         btnCadastrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar.setText("Cadastrar");
-        btnCadastrar.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
+        btnCadastrar.setText("Cadastrar (F1)");
+        btnCadastrar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCadastrarActionPerformed(evt);
@@ -131,7 +148,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
         btnSair.setBackground(new java.awt.Color(102, 153, 0));
         btnSair.setForeground(new java.awt.Color(255, 255, 255));
         btnSair.setText("Sair (F2)");
-        btnSair.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
+        btnSair.setBorder(null);
         btnSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSairActionPerformed(evt);
@@ -148,6 +165,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
         jLabel2.setText("Código");
         jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
+        jtCodigo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jtCodigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jtCodigo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtCodigo.addActionListener(new java.awt.event.ActionListener() {
@@ -167,6 +185,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
         jLabel6.setText("Valor Unitário");
         jPanel5.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
+        jtValorUnitario.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jtValorUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jtValorUnitario.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtValorUnitario.addActionListener(new java.awt.event.ActionListener() {
@@ -180,7 +199,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
         jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Quantidade");
@@ -200,16 +219,42 @@ public class CadastrarProduto extends javax.swing.JDialog {
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel8.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 258, -1, -1));
 
-        jtaDescricao.setColumns(20);
-        jtaDescricao.setRows(5);
-        jtaDescricao.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel8.add(jtaDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 314, -1));
-
-        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Descrição do Produto");
-        jPanel8.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 40));
+        jPanel8.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
+
+        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jtaDescricao.setColumns(20);
+        jtaDescricao.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jtaDescricao.setLineWrap(true);
+        jtaDescricao.setRows(5);
+        jtaDescricao.setToolTipText("");
+        jtaDescricao.setWrapStyleWord(true);
+        jtaDescricao.setBorder(null);
+        jtaDescricao.setPreferredSize(new java.awt.Dimension(240, 85));
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
+        );
+
+        jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 87));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -217,18 +262,18 @@ public class CadastrarProduto extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(114, 114, 114)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)
-                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(97, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(119, 119, 119))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,7 +317,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
+        adicionarProduto();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
@@ -303,6 +348,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jsQuantidade;
     private javax.swing.JTextField jtCodigo;

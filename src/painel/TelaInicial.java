@@ -48,14 +48,6 @@ public class TelaInicial extends javax.swing.JFrame {
         
         List<Produto> listaProdutos = new ArrayList<>();
         
-        for(int i = 0; i < 30; i++) {
-            if(i % 2 == 0) {
-                listaProdutos.add(new Produto("123", "Arroz Banco", 10, 32.50));
-            } else {
-                listaProdutos.add(new Produto("126", "Feijão Banco", 5, 32.50));
-            }
-        }
-        
         ModeloTabela<Produto> mt = new ModeloTabela<>(
                 new String[]{"Código", "Descrição", "Quantidade"},
                 listaProdutos,

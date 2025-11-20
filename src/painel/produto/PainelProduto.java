@@ -8,15 +8,24 @@ package painel.produto;
 import utilitarias.classes.Produto;
 import dados.BancoDados;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import modelos.ModeloTabela;
+import utilitarias.sistema.CRUDHashMap;
 import utilitarias.sistema.ControleAtalhos;
+import utilitarias.sistema.FuncoesNaTabela;
 
 /**
  *
@@ -28,24 +37,20 @@ public class PainelProduto extends javax.swing.JDialog {
      * Creates new form Venda
      */
     
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    private int linhasSelecionadaTabela;
+    
     public PainelProduto(JFrame parent) {
         super(parent, true);
         initComponents();
         
         setLocationRelativeTo(null);
         
-        List<Produto> listaProdutos = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
-            if(i % 2 == 0) {
-                listaProdutos.add(new Produto("123", "Cacto de Pote", 8, 6.78));
-            } else {
-                listaProdutos.add(new Produto("134", "Suculentas", 7, 7.56));
-            }
-        }
+        List<Produto> listaProdutosArrayList = new ArrayList<>(listaProdutosHashMap.values());
         
         ModeloTabela<Produto> mt = new ModeloTabela<>(
                 new String[]{"Código", "Descrição", "Valor Unitário", "Quantidade"},
-                listaProdutos,
+                listaProdutosArrayList,
                 p -> new Object[] {
                     p.getCodigo(),
                     p.getDescricao(),
@@ -58,11 +63,36 @@ public class PainelProduto extends javax.swing.JDialog {
         
         ModeloTabela.reconfigurarModelo(jtProduto);
         
-        ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> new CadastrarProduto(parent).setVisible(true));
-    }
-    
-    private void atualizarTabela() {
+        ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> {
+            CadastrarProduto cadastroProduto = new CadastrarProduto(parent);
+            cadastroProduto.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProduto, p -> new Object[] {
+                        p.getCodigo(),
+                        p.getDescricao(),
+                        p.getValorUnitario(),
+                        p.getQuatidade()
+                    });
+                    jtQuantidadeProdutos.setText("" + listaProdutosHashMap.size());
+                    listaProdutosArrayList.clear();
+                    listaProdutosArrayList.addAll(listaProdutosHashMap.values());
+                }
+            });
+            cadastroProduto.setVisible(true);
+        });
         
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> {
+            Produto produto = CRUDHashMap.buscarItemTabela(listaProdutosHashMap, jtProduto, linhasSelecionadaTabela);
+            if(produto != null) {
+                EditarProduto editarProduto = new EditarProduto(parent, produto);
+                editarProduto.setVisible(true);
+            }
+        });
+        
+        FuncoesNaTabela.pegarSelecaoDaTabela(jtProduto, linha -> {
+            this.linhasSelecionadaTabela = linha;
+        });
     }
 
     /**
@@ -87,6 +117,8 @@ public class PainelProduto extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jtQuantidadeProdutos = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jPanel18 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
@@ -180,6 +212,7 @@ public class PainelProduto extends javax.swing.JDialog {
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel4.setPreferredSize(new java.awt.Dimension(374, 32));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel7.setBackground(new java.awt.Color(51, 102, 0));
 
@@ -199,18 +232,20 @@ public class PainelProduto extends javax.swing.JDialog {
             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        jPanel4.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, -1, -1));
+
+        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtQuantidadeProdutos.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jtQuantidadeProdutos.setForeground(new java.awt.Color(51, 102, 0));
+        jtQuantidadeProdutos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtQuantidadeProdutos.setToolTipText("");
+        jtQuantidadeProdutos.setBorder(null);
+        jPanel9.add(jtQuantidadeProdutos, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 370, 72));
+
+        jPanel4.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 374, 74));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -301,7 +336,7 @@ public class PainelProduto extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
 
@@ -328,7 +363,9 @@ public class PainelProduto extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jtProduto;
+    private javax.swing.JTextField jtQuantidadeProdutos;
     // End of variables declaration//GEN-END:variables
 }
