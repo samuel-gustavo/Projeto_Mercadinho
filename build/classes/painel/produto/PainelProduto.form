@@ -342,7 +342,7 @@
                 <Component class="javax.swing.JTextField" name="jtQuantidadeProdutos">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Dialog" size="14" style="1"/>
+                      <Font name="Dialog" size="16" style="1"/>
                     </Property>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="66" red="33" type="rgb"/>
@@ -394,7 +394,7 @@
                           <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="50" max="32767" attributes="0"/>
+                      <EmptySpace pref="67" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -469,7 +469,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="3"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="F2- Editar"/>
+                <Property name="text" type="java.lang.String" value="F4- Sair"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel22">
@@ -477,7 +477,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="12" style="3"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="F1- Cadastrar"/>
+                <Property name="text" type="java.lang.String" value="F3- Deletar"/>
               </Properties>
             </Component>
           </SubComponents>

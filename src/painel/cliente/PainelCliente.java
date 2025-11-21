@@ -8,28 +8,113 @@ package painel.cliente;
 import utilitarias.classes.Cliente;
 import dados.BancoDados;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
+import modelos.ModeloTabela;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.ControleAtalhos;
+import utilitarias.sistema.FuncoesNaTabela;
 
 /**
  *
  * @author samuel
  */
-public class PainelCliente extends javax.swing.JFrame {
+public class PainelCliente extends javax.swing.JDialog {
 
     /**
      * Creates new form PainelCliente
      */
-   
     
-    public PainelCliente() {
+    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashClientes();
+    private int linhaSelecionadaTabela;
+    
+    public PainelCliente(JFrame parent) {
+        super(parent, true);
         initComponents();
         
         setLocationRelativeTo(null);
         
+        List<Cliente> listaClientesArrayList = new ArrayList<>(listaClientesHashMap.values());
+        
+        ModeloTabela<Cliente> mt = new ModeloTabela<>(
+                new String[]{"CPF", "Nome", "Telefone", "Endereço"},
+                listaClientesArrayList,
+                c -> new Object[] {
+                    c.getCpf(),
+                    c.getNome(),
+                    c.getTelefone(),
+                    c.getEndereco()
+                }
+        );
+        
+        jtCliente.setModel(mt);
+        
+        ModeloTabela.reconfigurarModelo(jtCliente);
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> {
+            CadastrarCliente cadastrarCliente = new CadastrarCliente(parent);
+            cadastrarCliente.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    CRUDHashMap.preencherTabela(listaClientesHashMap, jtCliente, c -> new Object[] {
+                        c.getCpf(), 
+                        c.getNome(),
+                        c.getTelefone(),
+                        c.getEndereco()
+                    });
+                    FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaClientesHashMap, listaClientesArrayList, jtQuantidadeClientes);
+                }
+            });
+            cadastrarCliente.setVisible(true);
+        });
+        
+        FuncoesNaTabela.pegarSelecaoDaTabela(jtCliente, linha -> {
+            this.linhaSelecionadaTabela = linha;
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> {
+            Cliente cliente = CRUDHashMap.buscarItemTabela(listaClientesHashMap, jtCliente, linhaSelecionadaTabela);
+            if(cliente != null) {
+                EditarCliente editarCliente = new EditarCliente(parent, cliente);
+                editarCliente.setVisible(true);
+                editarCliente.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        CRUDHashMap.preencherTabela(listaClientesHashMap, jtCliente, c -> new Object[] {
+                            c.getCpf(),
+                            c.getNome(),
+                            c.getTelefone(),
+                            c.getEndereco()
+                        });
+                        FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaClientesHashMap, listaClientesArrayList, jtQuantidadeClientes);
+                    }
+                });
+            }
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> {
+            Cliente cliente = CRUDHashMap.buscarItemTabela(listaClientesHashMap, jtCliente, linhaSelecionadaTabela);
+            if(cliente != null) {
+                CRUDHashMap.excluirItem(listaClientesHashMap, cliente.getCpf());
+                CRUDHashMap.preencherTabela(listaClientesHashMap, jtCliente, c -> new Object[] {
+                    c.getCpf(),
+                    c.getNome(),
+                    c.getTelefone(),
+                    c.getEndereco()
+                });
+                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaClientesHashMap, listaClientesArrayList, jtQuantidadeClientes);
+            }
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> dispose());
     }
     
     private void atualizarTabela() {
@@ -51,13 +136,20 @@ public class PainelCliente extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtCliente = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jtQuantidadeClientes = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jPanel18 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -86,6 +178,7 @@ public class PainelCliente extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel6.setBackground(new java.awt.Color(51, 153, 0));
 
@@ -110,25 +203,37 @@ public class PainelCliente extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 274, Short.MAX_VALUE))
-        );
+        jPanel3.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, -1, 40));
+
+        jPanel8.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtCliente.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jtCliente);
+
+        jPanel8.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, 0, 793, 282));
+
+        jPanel3.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 38, 788, 280));
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel4.setPreferredSize(new java.awt.Dimension(374, 32));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel7.setBackground(new java.awt.Color(51, 102, 0));
 
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Quantidade de Clientes");
@@ -144,18 +249,20 @@ public class PainelCliente extends javax.swing.JFrame {
             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        jPanel4.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 382, -1));
+
+        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtQuantidadeClientes.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jtQuantidadeClientes.setForeground(new java.awt.Color(51, 102, 0));
+        jtQuantidadeClientes.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtQuantidadeClientes.setToolTipText("");
+        jtQuantidadeClientes.setBorder(null);
+        jPanel9.add(jtQuantidadeClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 380, 72));
+
+        jPanel4.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 384, 74));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -175,22 +282,34 @@ public class PainelCliente extends javax.swing.JFrame {
             .addGap(0, 110, Short.MAX_VALUE)
         );
 
-        jLabel21.setText("F1- Iniciar Venda");
+        jLabel21.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel21.setText("F1- Cadastrar");
 
-        jLabel18.setText("F2- Cancelar Venda");
+        jLabel18.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel18.setText("F2- Editar");
+
+        jLabel19.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel19.setText("F4- Sair");
+
+        jLabel22.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel22.setText("F3- Deletar");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addGap(46, 46, 46)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel18)
                     .addComponent(jLabel21))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(44, 44, 44)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel19)
+                    .addComponent(jLabel22))
+                .addGap(60, 60, 60))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,10 +317,17 @@ public class PainelCliente extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel21)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel18))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel19)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -225,15 +351,13 @@ public class PainelCliente extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 850, -1));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 850, 490));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -242,8 +366,10 @@ public class PainelCliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel18;
@@ -253,5 +379,10 @@ public class PainelCliente extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jtCliente;
+    private javax.swing.JTextField jtQuantidadeClientes;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,17 +5,57 @@
  */
 package painel.cliente;
 
+import dados.BancoDados;
+import java.util.HashMap;
+import javax.swing.JFrame;
+import utilitarias.classes.Cliente;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.ControleAtalhos;
+
 /**
  *
  * @author samuel
  */
-public class EditarCliente extends javax.swing.JFrame {
+public class EditarCliente extends javax.swing.JDialog {
 
     /**
      * Creates new form EditarCliente
      */
-    public EditarCliente() {
+    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashClientes();
+    HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
+        put("F1", () -> editarCliente());
+        put("F2", () -> sairPainelEditar());
+    }};
+    Cliente cliente;
+    
+    public EditarCliente(JFrame parent, Cliente cliente) {
+        super(parent, true);
         initComponents();
+        
+        setLocationRelativeTo(null);
+        this.cliente = cliente;
+        this.colocarValoresNosCampos(cliente);
+        ControleAtalhos.passadorDeCampoComEnter(jfCPF, jtNome, jfTelefone, jtaEndereco, btnEditar);
+    }
+    
+    private void colocarValoresNosCampos(Cliente cliente) {
+        jfCPF.setText(cliente.getCpf());
+        jtNome.setText(cliente.getNome());
+        jfTelefone.setText(cliente.getTelefone());
+        jtaEndereco.setText(cliente.getEndereco());
+    }
+    
+    private void editarCliente() {
+        String cpf = jfCPF.getText();
+        String nome = jtNome.getText();
+        String telefone = jfTelefone.getText();
+        String endereco = jtaEndereco.getText();
+        
+        CRUDHashMap.editarItem(this, listaClientesHashMap, cliente.getCpf(), cpf, new Cliente(cpf, nome, telefone, endereco));
+    }
+    
+    private void sairPainelEditar() {
+        dispose();
     }
 
     /**
@@ -31,23 +71,23 @@ public class EditarCliente extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        btnCadastrar1 = new javax.swing.JButton();
-        btnSair1 = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnSair = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jfCPF = new javax.swing.JFormattedTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jtCodigo1 = new javax.swing.JTextField();
+        jtNome = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jtaDescricao = new javax.swing.JTextArea();
         jLabel9 = new javax.swing.JLabel();
+        jPanel11 = new javax.swing.JPanel();
+        jtaEndereco = new javax.swing.JTextArea();
         jPanel10 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jfTelefone = new javax.swing.JFormattedTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(51, 153, 0));
@@ -75,23 +115,23 @@ public class EditarCliente extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnCadastrar1.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar1.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar1.setText("Cadastrar");
-        btnCadastrar1.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
-        btnCadastrar1.addActionListener(new java.awt.event.ActionListener() {
+        btnEditar.setBackground(new java.awt.Color(102, 153, 0));
+        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditar.setText("Editar (F1)");
+        btnEditar.setBorder(null);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrar1ActionPerformed(evt);
+                btnEditarActionPerformed(evt);
             }
         });
 
-        btnSair1.setBackground(new java.awt.Color(102, 153, 0));
-        btnSair1.setForeground(new java.awt.Color(255, 255, 255));
-        btnSair1.setText("Sair (F2)");
-        btnSair1.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
-        btnSair1.addActionListener(new java.awt.event.ActionListener() {
+        btnSair.setBackground(new java.awt.Color(102, 153, 0));
+        btnSair.setForeground(new java.awt.Color(255, 255, 255));
+        btnSair.setText("Sair (F2)");
+        btnSair.setBorder(null);
+        btnSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSair1ActionPerformed(evt);
+                btnSairActionPerformed(evt);
             }
         });
 
@@ -112,6 +152,7 @@ public class EditarCliente extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         jfCPF.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jfCPF.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jfCPF.setPreferredSize(new java.awt.Dimension(60, 35));
         jfCPF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -130,30 +171,56 @@ public class EditarCliente extends javax.swing.JFrame {
         jLabel7.setText("Nome");
         jPanel6.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
-        jtCodigo1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jtCodigo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCodigo1.addActionListener(new java.awt.event.ActionListener() {
+        jtNome.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jtNome.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtNome.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtCodigo1ActionPerformed(evt);
+                jtNomeActionPerformed(evt);
             }
         });
-        jPanel6.add(jtCodigo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
+        jPanel6.add(jtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         jPanel9.setBackground(new java.awt.Color(102, 153, 0));
         jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel9.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 258, -1, -1));
-
-        jtaDescricao.setColumns(20);
-        jtaDescricao.setRows(5);
-        jtaDescricao.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel9.add(jtaDescricao, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 314, -1));
 
         jLabel9.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setText("Endereço");
-        jPanel9.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 40));
+        jPanel9.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
+
+        jPanel11.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jtaEndereco.setColumns(20);
+        jtaEndereco.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jtaEndereco.setLineWrap(true);
+        jtaEndereco.setRows(5);
+        jtaEndereco.setToolTipText("");
+        jtaEndereco.setWrapStyleWord(true);
+        jtaEndereco.setBorder(null);
+        jtaEndereco.setPreferredSize(new java.awt.Dimension(240, 85));
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtaEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
+        );
+
+        jPanel9.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 87));
 
         jPanel10.setBackground(new java.awt.Color(102, 153, 0));
         jPanel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -172,6 +239,7 @@ public class EditarCliente extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         jfTelefone.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jfTelefone.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jPanel10.add(jfTelefone, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -180,19 +248,19 @@ public class EditarCliente extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(114, 114, 114)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(btnCadastrar1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)
-                        .addComponent(btnSair1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(97, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(123, 123, 123))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,8 +275,8 @@ public class EditarCliente extends javax.swing.JFrame {
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSair1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
         );
 
@@ -223,52 +291,52 @@ public class EditarCliente extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 710, 480));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 710, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCadastrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrar1ActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        editarCliente();
+    }//GEN-LAST:event_btnEditarActionPerformed
 
-    }//GEN-LAST:event_btnCadastrar1ActionPerformed
-
-    private void btnSair1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSair1ActionPerformed
+    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         dispose();
-    }//GEN-LAST:event_btnSair1ActionPerformed
+    }//GEN-LAST:event_btnSairActionPerformed
 
     private void jfCPFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfCPFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jfCPFActionPerformed
 
-    private void jtCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigo1ActionPerformed
+    private void jtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtNomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jtCodigo1ActionPerformed
+    }//GEN-LAST:event_jtNomeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCadastrar1;
-    private javax.swing.JButton btnSair1;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JFormattedTextField jfCPF;
     private javax.swing.JFormattedTextField jfTelefone;
-    private javax.swing.JTextField jtCodigo1;
-    private javax.swing.JTextArea jtaDescricao;
+    private javax.swing.JTextField jtNome;
+    private javax.swing.JTextArea jtaEndereco;
     // End of variables declaration//GEN-END:variables
 }

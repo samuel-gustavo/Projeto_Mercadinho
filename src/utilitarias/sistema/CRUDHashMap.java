@@ -26,7 +26,7 @@ public class CRUDHashMap {
     public static <K, V> void adicionarItem(Map<K, V> hashmap, K chave, V valor) {
         if(!hashmap.containsKey(chave)) {
             hashmap.put(chave, valor);
-            JOptionPane.showMessageDialog(null, "Valor adicionado com Sucesso!");
+            JOptionPane.showMessageDialog(null, "Item adicionado com Sucesso!");
         } else {
             JOptionPane.showMessageDialog(null, "Esse Item já foi Cadastrado!");
         }
@@ -52,9 +52,21 @@ public class CRUDHashMap {
     }
     
     public static <K, V> void editarItem(JDialog dialog, Map<K, V> hashmap, K chaveAntiga, K chave, V valor) {
-        hashmap.remove(chaveAntiga);
-        hashmap.put(chave, valor);
-        JOptionPane.showMessageDialog(null, "Valor Editado com Sucesso!");
-        dialog.dispose();
+        if(!chaveAntiga.equals(chave) && hashmap.containsKey(chave)) {
+            JOptionPane.showMessageDialog(null, "Esse item não pode ser editado!");
+        } else {
+            hashmap.remove(chaveAntiga);
+            hashmap.put(chave, valor);
+            JOptionPane.showMessageDialog(null, "Item Editado com Sucesso!");
+            dialog.dispose();    
+        }
+    }
+    
+    public static <K, V> void excluirItem(Map<K, V> hashmap, K chave) {
+        int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja Excluir?", "Confirmação", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(hashmap.containsKey(chave) && resposta == JOptionPane.YES_OPTION) {
+            hashmap.remove(chave);
+            JOptionPane.showMessageDialog(null, "Item Excluído com Sucesso!");
+        }
     }
 }

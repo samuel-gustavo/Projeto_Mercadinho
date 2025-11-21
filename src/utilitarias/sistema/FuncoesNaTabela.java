@@ -5,9 +5,15 @@
  */
 package utilitarias.sistema;
 
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -24,5 +30,11 @@ public class FuncoesNaTabela {
                 callback.accept(linha);
             }
         });
+    }
+    
+    public static <K, V> void informarQuantidadeEPreencharArrayListDaTabela(Map<K, V> hashmap, List<V> arrayList, JTextField jtextField) {
+        jtextField.setText("" + hashmap.size());
+        arrayList.clear();
+        arrayList.addAll(hashmap.values());
     }
 }

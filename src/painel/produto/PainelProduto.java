@@ -38,7 +38,7 @@ public class PainelProduto extends javax.swing.JDialog {
      */
     
     HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
-    private int linhasSelecionadaTabela;
+    private int linhaSelecionadaTabela;
     
     public PainelProduto(JFrame parent) {
         super(parent, true);
@@ -74,25 +74,51 @@ public class PainelProduto extends javax.swing.JDialog {
                         p.getValorUnitario(),
                         p.getQuatidade()
                     });
-                    jtQuantidadeProdutos.setText("" + listaProdutosHashMap.size());
-                    listaProdutosArrayList.clear();
-                    listaProdutosArrayList.addAll(listaProdutosHashMap.values());
+                    FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList, jtQuantidadeProdutos);
                 }
             });
             cadastroProduto.setVisible(true);
         });
         
+        FuncoesNaTabela.pegarSelecaoDaTabela(jtProduto, linha -> {
+            this.linhaSelecionadaTabela = linha;
+        });
+        
         ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> {
-            Produto produto = CRUDHashMap.buscarItemTabela(listaProdutosHashMap, jtProduto, linhasSelecionadaTabela);
+            Produto produto = CRUDHashMap.buscarItemTabela(listaProdutosHashMap, jtProduto, linhaSelecionadaTabela);
             if(produto != null) {
                 EditarProduto editarProduto = new EditarProduto(parent, produto);
                 editarProduto.setVisible(true);
+                editarProduto.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProduto, p -> new Object[] {
+                            p.getCodigo(),
+                            p.getDescricao(),
+                            p.getValorUnitario(),
+                            p.getQuatidade()
+                        });
+                        FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList, jtQuantidadeProdutos);
+                    }
+                });
             }
         });
         
-        FuncoesNaTabela.pegarSelecaoDaTabela(jtProduto, linha -> {
-            this.linhasSelecionadaTabela = linha;
+        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> {
+            Produto produto = CRUDHashMap.buscarItemTabela(listaProdutosHashMap, jtProduto, linhaSelecionadaTabela);
+            if(produto != null) {
+                CRUDHashMap.excluirItem(listaProdutosHashMap, produto.getCodigo());
+                CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProduto, p -> new Object[] {
+                    p.getCodigo(),
+                    p.getDescricao(),
+                    p.getValorUnitario(),
+                    p.getQuatidade()
+                });
+                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList, jtQuantidadeProdutos);
+            }
         });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> dispose());
     }
 
     /**
@@ -238,7 +264,7 @@ public class PainelProduto extends javax.swing.JDialog {
         jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jtQuantidadeProdutos.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jtQuantidadeProdutos.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jtQuantidadeProdutos.setForeground(new java.awt.Color(51, 102, 0));
         jtQuantidadeProdutos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jtQuantidadeProdutos.setToolTipText("");
@@ -272,10 +298,10 @@ public class PainelProduto extends javax.swing.JDialog {
         jLabel18.setText("F2- Editar");
 
         jLabel19.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel19.setText("F2- Editar");
+        jLabel19.setText("F4- Sair");
 
         jLabel22.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel22.setText("F1- Cadastrar");
+        jLabel22.setText("F3- Deletar");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -292,7 +318,7 @@ public class PainelProduto extends javax.swing.JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel22)
                     .addComponent(jLabel19))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

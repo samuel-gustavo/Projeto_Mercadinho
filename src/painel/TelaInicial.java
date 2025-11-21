@@ -17,6 +17,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -42,9 +43,7 @@ public class TelaInicial extends javax.swing.JFrame {
         initComponents();
         
         setLocationRelativeTo(null);
-        
-        this.setSize(1375, 725);
-        this.setResizable(false);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         List<Produto> listaProdutos = new ArrayList<>();
         
@@ -62,12 +61,9 @@ public class TelaInicial extends javax.swing.JFrame {
         
         ModeloTabela.reconfigurarModelo(jtProdutos);
         
-        // Ajustando Colunas
-//        ModeloTabela.ajustarColuna(jtProdutos, 0, 70);
-//        ModeloTabela.ajustarColuna(jtProdutos, 1, 143);
-//        ModeloTabela.ajustarColuna(jtProdutos, 2, 70);
-        
         ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> new PainelProduto(this).setVisible(true));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> new PainelFuncionario(this).setVisible(true));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F5", () -> new PainelCliente(this).setVisible(true));
     }
 
     /**
@@ -133,9 +129,6 @@ public class TelaInicial extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1375, 725));
-        getContentPane().setLayout(null);
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(0, 284, 0, 0);
 
         jPanel1.setBackground(new java.awt.Color(51, 102, 0));
 
@@ -168,9 +161,6 @@ public class TelaInicial extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
-
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(0, 0, 1375, 100);
 
         jPanel2.setBackground(new java.awt.Color(240, 240, 240));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -397,7 +387,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel15.setText("R$ 5,36");
         jPanel10.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
 
-        jPanel2.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 255, 200, 80));
+        jPanel2.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 260, 200, 80));
 
         jPanel12.setBackground(new java.awt.Color(255, 255, 255));
         jPanel12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -443,8 +433,24 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel2.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 690, 110));
 
-        getContentPane().add(jPanel2);
-        jPanel2.setBounds(0, 90, 1375, 620);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 1375, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLabel3)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(90, 90, 90)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 660, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(284, 284, 284)
+                .addComponent(jLabel3))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

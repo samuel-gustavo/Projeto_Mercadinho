@@ -5,17 +5,54 @@
  */
 package painel.funcionario;
 
+import dados.BancoDados;
+import java.util.HashMap;
+import javax.swing.JFrame;
+import utilitarias.classes.Funcionario;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.ControleAtalhos;
+
 /**
  *
  * @author samuel
  */
-public class EditarFuncionario extends javax.swing.JFrame {
+public class EditarFuncionario extends javax.swing.JDialog {
 
     /**
      * Creates new form EditarFuncionario
      */
-    public EditarFuncionario() {
+    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashFuncionarios();
+    HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
+        put("F1", () -> sairPainelEditar());
+        put("F2", () -> sairPainelEditar());
+    }};
+    Funcionario funcionario;
+    
+    public EditarFuncionario(JFrame parent, Funcionario funcionario) {
+        super(parent, true);
         initComponents();
+        
+        setLocationRelativeTo(null);
+        this.funcionario = funcionario;
+        this.colocarValoresNosCampos(funcionario);
+        ControleAtalhos.addKeyBindings(getRootPane(), atalhos);
+        ControleAtalhos.passadorDeCampoComEnter(jfCPF, jtNome, btnEditar);
+    }
+    
+    private void sairPainelEditar() {
+        dispose();
+    }
+    
+    private void colocarValoresNosCampos(Funcionario funcionario) {
+        jfCPF.setText(funcionario.getCpf());
+        jtNome.setText(funcionario.getNome());
+    }
+    
+    private void editarFuncionario() {
+        String cpf = jfCPF.getText();
+        String nome = jtNome.getText();
+        
+        CRUDHashMap.editarItem(this, listaFuncionariosHashMap, funcionario.getCpf(), cpf, new Funcionario(cpf, nome));
     }
 
     /**
@@ -31,16 +68,16 @@ public class EditarFuncionario extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        btnCadastrar2 = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jfCPF = new javax.swing.JFormattedTextField();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jtCodigo1 = new javax.swing.JTextField();
+        jtNome = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(51, 153, 0));
@@ -68,20 +105,20 @@ public class EditarFuncionario extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnCadastrar2.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar2.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar2.setText("Cadastrar");
-        btnCadastrar2.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
-        btnCadastrar2.addActionListener(new java.awt.event.ActionListener() {
+        btnEditar.setBackground(new java.awt.Color(102, 153, 0));
+        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditar.setText("Editar (F1)");
+        btnEditar.setBorder(null);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrar2ActionPerformed(evt);
+                btnEditarActionPerformed(evt);
             }
         });
 
         btnSair.setBackground(new java.awt.Color(102, 153, 0));
         btnSair.setForeground(new java.awt.Color(255, 255, 255));
         btnSair.setText("Sair (F2)");
-        btnSair.setBorder(javax.swing.BorderFactory.createEtchedBorder(java.awt.Color.black, new java.awt.Color(153, 153, 0)));
+        btnSair.setBorder(null);
         btnSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSairActionPerformed(evt);
@@ -105,6 +142,7 @@ public class EditarFuncionario extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         jfCPF.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jfCPF.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jfCPF.setPreferredSize(new java.awt.Dimension(65, 19));
         jPanel5.add(jfCPF, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 35, 314, 35));
 
@@ -118,14 +156,15 @@ public class EditarFuncionario extends javax.swing.JFrame {
         jLabel6.setText("Nome");
         jPanel6.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 314, 30));
 
-        jtCodigo1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jtCodigo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtCodigo1.addActionListener(new java.awt.event.ActionListener() {
+        jtNome.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jtNome.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtNome.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtCodigo1ActionPerformed(evt);
+                jtNomeActionPerformed(evt);
             }
         });
-        jPanel6.add(jtCodigo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
+        jPanel6.add(jtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 314, 35));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -139,7 +178,7 @@ public class EditarFuncionario extends javax.swing.JFrame {
                 .addContainerGap(97, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCadastrar2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49)
                 .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(123, 123, 123))
@@ -153,7 +192,7 @@ public class EditarFuncionario extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCadastrar2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
@@ -180,20 +219,20 @@ public class EditarFuncionario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCadastrar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrar2ActionPerformed
-
-    }//GEN-LAST:event_btnCadastrar2ActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        editarFuncionario();
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         dispose();
     }//GEN-LAST:event_btnSairActionPerformed
 
-    private void jtCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigo1ActionPerformed
+    private void jtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtNomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jtCodigo1ActionPerformed
+    }//GEN-LAST:event_jtNomeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCadastrar2;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
@@ -204,6 +243,6 @@ public class EditarFuncionario extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JFormattedTextField jfCPF;
-    private javax.swing.JTextField jtCodigo1;
+    private javax.swing.JTextField jtNome;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,6 +8,7 @@ package painel.produto;
 import dados.BancoDados;
 import java.util.HashMap;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import utilitarias.classes.Produto;
 import utilitarias.sistema.CRUDHashMap;
 import utilitarias.sistema.ControleAtalhos;
@@ -25,7 +26,7 @@ public class EditarProduto extends javax.swing.JDialog {
     Produto produto;
     
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
-        put("F1", () -> editarValor());
+        put("F1", () -> editarProduto());
         put("F2", () -> sairPainelEditar());
     }};
     
@@ -47,7 +48,7 @@ public class EditarProduto extends javax.swing.JDialog {
         jtaEditDescricao.setText(produto.getDescricao());
     }
     
-    private void editarValor() {
+    private void editarProduto() {
         String codigo = jtEditCodigo.getText();
         String valorUnitario = jtEditValorUnitario.getText();
         int quantidade = (Integer) jsEditQuantidade.getValue();
@@ -55,6 +56,13 @@ public class EditarProduto extends javax.swing.JDialog {
         
         CRUDHashMap.editarItem(this, listaProdutosHashMap, produto.getCodigo(), codigo, new Produto(codigo, descricao, quantidade, valorUnitario));
     }
+    
+//    private void limparCampos() {
+//        jtEditCodigo.setText("");
+//        jtEditValorUnitario.setText("R$ 0,00");
+//        jsEditQuantidade.setValue(0);
+//        jtaEditDescricao.setText("");
+//    }
     
     private void sairPainelEditar() {
         dispose();
@@ -273,7 +281,7 @@ public class EditarProduto extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -288,12 +296,12 @@ public class EditarProduto extends javax.swing.JDialog {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(24, 24, 24)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 705, 480));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 705, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -311,7 +319,7 @@ public class EditarProduto extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-
+        editarProduto();
     }//GEN-LAST:event_btnEditarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
