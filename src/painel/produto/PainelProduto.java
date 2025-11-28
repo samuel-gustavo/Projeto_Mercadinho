@@ -37,7 +37,7 @@ public class PainelProduto extends javax.swing.JDialog {
      * Creates new form Venda
      */
     
-    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashmapProdutos();
     private int linhaSelecionadaTabela;
     
     public PainelProduto(JFrame parent) {

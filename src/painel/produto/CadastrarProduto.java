@@ -34,7 +34,7 @@ public class CadastrarProduto extends javax.swing.JDialog {
      * Creates new form CadastrarProduto
      */
     
-    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashmapProdutos();
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
         put("F1", () -> adicionarProduto());
         put("F2", () -> sairPainelCadastro());

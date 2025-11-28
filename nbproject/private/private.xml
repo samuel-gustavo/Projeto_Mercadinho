@@ -4,9 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/painel/produto/PainelProduto.java</file>
-            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/classesutilitarias/Produto.java</file>
-            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/painel/produto/CadastrarProduto.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/utilitarias/sistema/FuncoesNaTabela.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/utilitarias/sistema/CampoMoedaFormatada.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/utilitarias/sistema/FuncoesCamposTexto.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/utilitarias/sistema/CRUDHashMap.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/utilitarias/classes/Venda.java</file>
             <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/painel/TelaInicial.java</file>
+            <file>file:/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/dados/BancoDados.java</file>
         </group>
     </open-files>
 </project-private>

@@ -32,7 +32,7 @@ public class PainelFuncionario extends javax.swing.JDialog {
     /**
      * Creates new form PainelFuncionario
      */
-    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashFuncionarios();
+    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashmapFuncionarios();
     private int linhaSelecionadaTabela;
     
     public PainelFuncionario(JFrame parent) {

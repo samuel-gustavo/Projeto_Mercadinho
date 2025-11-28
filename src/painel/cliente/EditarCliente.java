@@ -21,7 +21,7 @@ public class EditarCliente extends javax.swing.JDialog {
     /**
      * Creates new form EditarCliente
      */
-    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashClientes();
+    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashmapClientes();
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
         put("F1", () -> editarCliente());
         put("F2", () -> sairPainelEditar());

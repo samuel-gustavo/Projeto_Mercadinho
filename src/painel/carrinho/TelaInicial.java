@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package painel;
+package painel.carrinho;
 
+import dados.BancoDados;
 import utilitarias.classes.Produto;
 import utilitarias.classes.Venda;
 import java.awt.Color;
@@ -12,23 +13,36 @@ import java.awt.Dimension;
 import java.awt.Font;
 import painel.produto.PainelProduto;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.QuantifierNode;
 import modelos.ModeloTabela;
 import painel.cliente.PainelCliente;
 import painel.funcionario.PainelFuncionario;
 import painel.carrinho.PainelCarrinho;
+import painel.venda.EfetuarVenda;
+import utilitarias.sistema.CRUDHashMap;
+import utilitarias.sistema.CampoMoedaFormatada;
 import utilitarias.sistema.ControleAtalhos;
+import utilitarias.sistema.DadosFicticios;
+import utilitarias.sistema.FuncoesCamposTexto;
+import utilitarias.sistema.FuncoesNaTabela;
 
 /**
  *
@@ -39,17 +53,39 @@ public class TelaInicial extends javax.swing.JFrame {
     /**
      * Creates new form TelaInicial
      */
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashmapProdutos();
+    HashMap<String, Produto> listaCarrinhohashMap = BancoDados.getHashmapCarrinho();
+    
+    List<Produto> listaCarrinhoArrayList = new ArrayList<>(listaCarrinhohashMap.values());
+    
+    Produto produtoPesquisado = null;
+    private int linhaSelecionadaTabela;
+    private String opcao = "cadastrar";
+    
     public TelaInicial() {
         initComponents();
         
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         
-        List<Produto> listaProdutos = new ArrayList<>();
+        List<Produto> listaProdutosArrayList = new ArrayList<>(listaProdutosHashMap.values());
+        
+        DadosFicticios dados = new DadosFicticios();
+        for(String[] p: dados.getProdutos()) {
+            Produto produto = new Produto(
+                    p[0],
+                    p[1],
+                    Integer.parseInt(p[2]),
+                    p[3]
+            );
+            
+            listaProdutosHashMap.put(p[0], produto);
+            listaProdutosArrayList.add(produto);
+        }
         
         ModeloTabela<Produto> mt = new ModeloTabela<>(
                 new String[]{"Código", "Descrição", "Quantidade"},
-                listaProdutos,
+                listaProdutosArrayList,
                 p -> new Object[]{
                     p.getCodigo(),
                     p.getDescricao(),
@@ -57,13 +93,206 @@ public class TelaInicial extends javax.swing.JFrame {
                 }
         );
         
-        jtProdutos.setModel(mt);
+        jtProdutosVenda.setModel(mt);
         
-        ModeloTabela.reconfigurarModelo(jtProdutos);
+        mostrarDescricaoDosProdutosDaTabela(jtProdutosVenda);
+        ModeloTabela.reconfigurarModelo(jtProdutosVenda);
         
-        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> new PainelProduto(this).setVisible(true));
-        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> new PainelFuncionario(this).setVisible(true));
-        ControleAtalhos.addKeyBinding(getRootPane(), "F5", () -> new PainelCliente(this).setVisible(true));
+        ModeloTabela<Produto> mt2 = new ModeloTabela<>(
+                new String[]{"Código", "Descrição", "Valor Unitário", "Quantidade"},
+                listaCarrinhoArrayList,
+                p -> new Object[]{
+                    p.getCodigo(),
+                    p.getDescricao(),
+                    p.getValorUnitario(),
+                    p.getQuatidade()
+                }
+        );
+        
+        jtCarrinho.setModel(mt2);
+        
+        mostrarDescricaoDosProdutosDaTabela(jtCarrinho);
+        ModeloTabela.reconfigurarModelo(jtCarrinho);
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> jtCodigoProduto.requestFocus());
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> JOptionPane.showMessageDialog(null, "Cancelar Venda! : )"));
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> {
+            if(listaCarrinhohashMap.size() > 0) {
+                Venda venda = new Venda(jtValortotal.getText(), listaCarrinhohashMap);
+                EfetuarVenda efetuarVenda = new EfetuarVenda(this, venda);
+                efetuarVenda.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Adicione pelo menos um item no Carrinho para realizar a Venda!");
+            }
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> {
+            Produto produtoCarrinho = CRUDHashMap.buscarItemTabela(listaCarrinhohashMap, jtCarrinho, linhaSelecionadaTabela);
+            if(produtoCarrinho != null) {
+                prepararCampoEdicao(produtoCarrinho);
+                this.opcao = "editar";
+            }
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F5", () -> {
+            Produto produtoCarrinho = CRUDHashMap.buscarItemTabela(listaCarrinhohashMap, jtCarrinho, linhaSelecionadaTabela);
+            if(produtoCarrinho != null) {
+                listaCarrinhohashMap.remove(produtoCarrinho.getCodigo());
+                CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, 
+                            p -> new Object[]{
+                                p.getCodigo(),
+                                p.getDescricao(),
+                                p.getValorUnitario(),
+                                p.getQuatidade()
+                            }
+                    );
+                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+            }
+        });
+        
+        FuncoesNaTabela.pegarSelecaoDaTabela(jtCarrinho, linha -> {
+            this.linhaSelecionadaTabela = linha;
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F6", () -> {
+            PainelProduto painelProduto = new PainelProduto(this);
+            painelProduto.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProdutosVenda, p -> new Object[] {
+                        p.getCodigo(),
+                        p.getDescricao(),
+                        p.getQuatidade()
+                    });
+                    FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList);
+                }
+            });
+            painelProduto.setVisible(true);
+        });
+        ControleAtalhos.addKeyBinding(getRootPane(), "F7", () -> new PainelFuncionario(this).setVisible(true));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F8", () -> new PainelCliente(this).setVisible(true));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F9", () -> dispose());
+        
+        FuncoesCamposTexto.pesquisaCampoTexto(jtProdutosVenda, jtCodigoProduto, listaProdutosHashMap, "int");
+    }
+    
+    private void limparCampos() {
+        jtCodigoProduto.setText("");
+        jtValorUnitario.setText("R$ 0,00");
+        jtQuantidadeProduto.setText("0");
+    }
+    
+    private void prepararCampoEdicao(Produto produto) {
+        jtCodigoProduto.setText(produto.getCodigo());
+        jtCodigoProduto.setEditable(false);
+        jtQuantidadeProduto.setText("" + produto.getQuatidade());
+        jtQuantidadeProduto.requestFocus();
+    }
+    
+    private void pesquisarProdutoPorCodigo() {
+        String codigo = jtCodigoProduto.getText();
+        if(listaProdutosHashMap.containsKey(codigo)) {
+            produtoPesquisado = new Produto(listaProdutosHashMap.get(codigo));
+            jtValorUnitario.setText(produtoPesquisado.getValorUnitario());
+            jtQuantidadeProduto.setText("1");
+            jtQuantidadeProduto.requestFocus();
+        } else {
+            JOptionPane.showMessageDialog(null, "Produto inexistente!");
+        }
+    }
+    
+    private void verificarQuantidadeInformada(String opcao) {
+        int quantidade = -1;
+        try {
+            quantidade = Integer.parseInt(jtQuantidadeProduto.getText());
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(null, "Informe um valor numérico para a quantidade!");
+            jtQuantidadeProduto.setText("1");
+        }
+        switch(opcao) {
+            case "cadastrar":
+                if(produtoPesquisado.getQuatidade() >= quantidade && quantidade >= 1) {
+                    produtoPesquisado.setQuatidade(quantidade);
+                    listaCarrinhohashMap.put(produtoPesquisado.getCodigo(), produtoPesquisado);
+                    CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, 
+                            p -> new Object[]{
+                                p.getCodigo(),
+                                p.getDescricao(),
+                                p.getValorUnitario(),
+                                p.getQuatidade()
+                            }
+                    );
+                    FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                    jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+                    produtoPesquisado = null;
+                    limparCampos();
+                    jtCodigoProduto.requestFocus();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Quantidade inválida para que o estoque apresenta!");
+                }
+                break;
+            case "editar":
+                Produto produtoCarrinho = CRUDHashMap.buscarItemTabela(listaCarrinhohashMap, jtCarrinho, linhaSelecionadaTabela);
+                Produto produtoOriginal = listaProdutosHashMap.get(produtoCarrinho.getCodigo());
+                if(produtoCarrinho != null) {
+                    quantidade = Integer.parseInt(jtQuantidadeProduto.getText());
+                    if(produtoOriginal.getQuatidade() >= quantidade) {
+                        produtoCarrinho.setQuatidade(quantidade);
+                        listaCarrinhohashMap.put(produtoCarrinho.getCodigo(), produtoCarrinho);
+                        CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, 
+                                p -> new Object[]{
+                                    p.getCodigo(),
+                                    p.getDescricao(),
+                                    p.getValorUnitario(),
+                                    p.getQuatidade()
+                                }
+                        );
+                        FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                        jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+                        produtoPesquisado = null;
+                        jtCodigoProduto.setEditable(true);
+                        jtCodigoProduto.requestFocus();
+                        limparCampos();
+                        this.opcao = "cadastrar";
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Quantidade Inexistente para o Estoque!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Selecione algum Item do Carrinho para Editar ou Deletar!");
+                }
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Erro ao verificar a quantidade informada!");
+        }
+        
+    }
+    
+    private void mostrarDescricaoDosProdutosDaTabela(JTable jtable) {
+        jtable.setToolTipText(""); // ativa tooltip
+
+        jtable.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+                int row = jtable.rowAtPoint(e.getPoint());
+
+                if (row >= 0) {
+                    int modelRow = jtable.convertRowIndexToModel(row);
+
+                    ModeloTabela<Produto> modelo = 
+                        (ModeloTabela<Produto>) jtable.getModel();
+
+                    Produto p = modelo.getLista().get(modelRow);
+
+                    jtable.setToolTipText(p.getDescricao());
+                } else {
+                    jtable.setToolTipText(null);
+                }
+            }
+        });
     }
 
     /**
@@ -91,7 +320,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtProdutos = new javax.swing.JTable();
+        jtProdutosVenda = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
@@ -101,25 +330,35 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel18 = new javax.swing.JPanel();
         jPanel19 = new javax.swing.JPanel();
         jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jPanel17 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
+        jPanel24 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtCarrinho = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        jPanel21 = new javax.swing.JPanel();
+        jtCodigoProduto = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
+        jPanel20 = new javax.swing.JPanel();
+        jtValorUnitario = new javax.swing.JTextField();
         jPanel12 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        jPanel23 = new javax.swing.JPanel();
+        jtQuantidadeProduto = new javax.swing.JTextField();
         jPanel14 = new javax.swing.JPanel();
         jPanel15 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        jPanel22 = new javax.swing.JPanel();
+        jtValortotal = new javax.swing.JTextField();
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -128,7 +367,6 @@ public class TelaInicial extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1375, 725));
 
         jPanel1.setBackground(new java.awt.Color(51, 102, 0));
 
@@ -146,7 +384,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 40)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Floricultura Cacto da Serra");
-        jPanel6.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 630, -1));
+        jPanel6.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, 630, 40));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -197,7 +435,7 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel4.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 30));
 
-        jtProdutos.setModel(new javax.swing.table.DefaultTableModel(
+        jtProdutosVenda.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -242,15 +480,15 @@ public class TelaInicial extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jtProdutos.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jtProdutos);
-        if (jtProdutos.getColumnModel().getColumnCount() > 0) {
-            jtProdutos.getColumnModel().getColumn(0).setResizable(false);
-            jtProdutos.getColumnModel().getColumn(1).setResizable(false);
-            jtProdutos.getColumnModel().getColumn(2).setResizable(false);
+        jtProdutosVenda.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jtProdutosVenda);
+        if (jtProdutosVenda.getColumnModel().getColumnCount() > 0) {
+            jtProdutosVenda.getColumnModel().getColumn(0).setResizable(false);
+            jtProdutosVenda.getColumnModel().getColumn(1).setResizable(false);
+            jtProdutosVenda.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        jPanel4.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, 26, 335, 305));
+        jPanel4.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, 27, 335, 305));
 
         jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 330, 330));
 
@@ -259,24 +497,24 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel16.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel16.setText("F5- Painel de Clientes");
-        jPanel5.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, -1, -1));
+        jLabel16.setText("F8- Painel de Clientes");
+        jPanel5.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, -1, -1));
 
         jLabel17.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel17.setText("F6- Sair do Sistema");
-        jPanel5.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(422, 20, -1, -1));
+        jLabel17.setText("F9- Sair do Sistema");
+        jPanel5.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 50, -1, -1));
 
         jLabel18.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel18.setText("F2- Cancelar Venda");
-        jPanel5.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
+        jPanel5.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
 
         jLabel19.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel19.setText("F3- Painel de Produtos");
-        jPanel5.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 20, -1, -1));
+        jLabel19.setText("F6- Painel de Produtos");
+        jPanel5.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
 
         jLabel20.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel20.setText("F4- Painel de Funcionários");
-        jPanel5.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, -1, -1));
+        jLabel20.setText("F7- Painel de Funcionários");
+        jPanel5.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, -1));
 
         jPanel18.setBackground(new java.awt.Color(0, 0, 0));
         jPanel18.setPreferredSize(new java.awt.Dimension(20, 110));
@@ -289,10 +527,10 @@ public class TelaInicial extends javax.swing.JFrame {
         );
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 110, Short.MAX_VALUE)
+            .addGap(0, 120, Short.MAX_VALUE)
         );
 
-        jPanel5.add(jPanel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, 2, 110));
+        jPanel5.add(jPanel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, 2, 120));
 
         jPanel19.setBackground(new java.awt.Color(0, 0, 0));
         jPanel19.setPreferredSize(new java.awt.Dimension(20, 110));
@@ -305,19 +543,32 @@ public class TelaInicial extends javax.swing.JFrame {
         );
         jPanel19Layout.setVerticalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 110, Short.MAX_VALUE)
+            .addGap(0, 120, Short.MAX_VALUE)
         );
 
-        jPanel5.add(jPanel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 2, 110));
+        jPanel5.add(jPanel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 0, 2, 120));
 
         jLabel22.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel22.setText("F1- Iniciar Venda");
-        jPanel5.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+        jLabel22.setText("F5- Deletar item");
+        jPanel5.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
 
-        jPanel2.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 480, 570, 110));
+        jLabel23.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel23.setText("F1- Iniciar Venda");
+        jPanel5.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+
+        jLabel24.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel24.setText("F3- Finalizar Venda");
+        jPanel5.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
+
+        jLabel25.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel25.setText("F4- Editar item");
+        jPanel5.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        jPanel2.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 480, 570, 120));
 
         jPanel7.setBackground(new java.awt.Color(255, 255, 255));
         jPanel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel17.setBackground(new java.awt.Color(51, 102, 0));
         jPanel17.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -328,20 +579,28 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel12.setText("Carrinho de Compras");
         jPanel17.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 30));
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, 690, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 298, Short.MAX_VALUE))
-        );
+        jPanel7.add(jPanel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, -1, -1));
+
+        jPanel24.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel24.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtCarrinho.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jtCarrinho);
+
+        jPanel24.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(-3, -2, 695, 305));
+
+        jPanel7.add(jPanel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 690, 300));
 
         jPanel2.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 130, 690, 330));
 
@@ -359,11 +618,22 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 30));
 
-        jLabel9.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(51, 102, 0));
-        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel9.setText("156854");
-        jPanel8.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
+        jPanel21.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel21.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtCodigoProduto.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jtCodigoProduto.setForeground(new java.awt.Color(51, 102, 0));
+        jtCodigoProduto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtCodigoProduto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtCodigoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtCodigoProdutoActionPerformed(evt);
+            }
+        });
+        jPanel21.add(jtCodigoProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 50));
+
+        jPanel8.add(jPanel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
 
         jPanel2.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, 200, 80));
 
@@ -381,11 +651,20 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel10.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 30));
 
-        jLabel15.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(51, 102, 0));
-        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel15.setText("R$ 5,36");
-        jPanel10.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
+        jPanel20.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel20.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtValorUnitario.setEditable(false);
+        jtValorUnitario.setBackground(new java.awt.Color(255, 255, 255));
+        jtValorUnitario.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jtValorUnitario.setForeground(new java.awt.Color(51, 102, 0));
+        jtValorUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtValorUnitario.setText("R$ 0,00");
+        jtValorUnitario.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel20.add(jtValorUnitario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 50));
+
+        jPanel10.add(jPanel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
 
         jPanel2.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 260, 200, 80));
 
@@ -403,11 +682,23 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel12.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 30));
 
-        jLabel11.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(51, 102, 0));
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("7");
-        jPanel12.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
+        jPanel23.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel23.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtQuantidadeProduto.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jtQuantidadeProduto.setForeground(new java.awt.Color(51, 102, 0));
+        jtQuantidadeProduto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtQuantidadeProduto.setText("0");
+        jtQuantidadeProduto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtQuantidadeProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtQuantidadeProdutoActionPerformed(evt);
+            }
+        });
+        jPanel23.add(jtQuantidadeProduto, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 50));
+
+        jPanel12.add(jPanel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 200, 50));
 
         jPanel2.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 380, 200, 80));
 
@@ -425,11 +716,21 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jPanel14.add(jPanel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 40));
 
-        jLabel10.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(51, 102, 0));
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("R$ 5,36");
-        jPanel14.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 70));
+        jPanel22.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel22.setToolTipText("");
+        jPanel22.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jtValortotal.setEditable(false);
+        jtValortotal.setBackground(new java.awt.Color(255, 255, 255));
+        jtValortotal.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jtValortotal.setForeground(new java.awt.Color(51, 102, 0));
+        jtValortotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jtValortotal.setText("R$ 0,00");
+        jtValortotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel22.add(jtValortotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 70));
+
+        jPanel14.add(jPanel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 70));
 
         jPanel2.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 690, 110));
 
@@ -459,6 +760,14 @@ public class TelaInicial extends javax.swing.JFrame {
         ImageIcon imagem = new ImageIcon("/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/icons/Cactoyce.png");
         JOptionPane.showMessageDialog(null, "", "Cactoyce --> Dona do Negócio", JOptionPane.INFORMATION_MESSAGE, imagem);
     }//GEN-LAST:event_jlImagemCactoyceMouseClicked
+
+    private void jtCodigoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtCodigoProdutoActionPerformed
+        pesquisarProdutoPorCodigo();
+    }//GEN-LAST:event_jtCodigoProdutoActionPerformed
+
+    private void jtQuantidadeProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtQuantidadeProdutoActionPerformed
+        verificarQuantidadeInformada(this.opcao);
+    }//GEN-LAST:event_jtQuantidadeProdutoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -497,25 +806,24 @@ public class TelaInicial extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -531,6 +839,11 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
+    private javax.swing.JPanel jPanel21;
+    private javax.swing.JPanel jPanel22;
+    private javax.swing.JPanel jPanel23;
+    private javax.swing.JPanel jPanel24;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -539,7 +852,13 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel jlImagemCactoyce;
-    private javax.swing.JTable jtProdutos;
+    private javax.swing.JTable jtCarrinho;
+    private javax.swing.JTextField jtCodigoProduto;
+    private javax.swing.JTable jtProdutosVenda;
+    private javax.swing.JTextField jtQuantidadeProduto;
+    private javax.swing.JTextField jtValorUnitario;
+    private javax.swing.JTextField jtValortotal;
     // End of variables declaration//GEN-END:variables
 }

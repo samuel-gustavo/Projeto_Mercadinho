@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 /**
@@ -54,6 +55,7 @@ public class ControleAtalhos {
             });
         });
     }
+    /*
     
     public static void passadorDeCampoComEnter(JComponent... componentes) {
 
@@ -94,6 +96,86 @@ public class ControleAtalhos {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     proximo.requestFocus();
+                }
+            });
+        }
+    } */
+    
+    public static void passadorDeCampoComEnter(JComponent... componentes) {
+        for (int i = 0; i < componentes.length; i++) {
+            final JComponent atual = componentes[i];
+            final int proximoIndex = i + 1;
+
+            // último componente
+            if (proximoIndex >= componentes.length) {
+                if (atual instanceof JButton) {
+                    final JButton botao = (JButton) atual;
+                    InputMap imBot = botao.getInputMap(JComponent.WHEN_FOCUSED);
+                    ActionMap amBot = botao.getActionMap();
+                    imBot.put(KeyStroke.getKeyStroke("ENTER"), "pressionarBotao");
+                    amBot.put("pressionarBotao", new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            botao.doClick();
+                        }
+                    });
+                }
+                continue;
+            }
+
+            final JComponent proximo = componentes[proximoIndex];
+
+            // não altere botões que estão no meio (serão clicados só se for o último)
+            if (atual instanceof JButton) continue;
+
+            InputMap im = atual.getInputMap(JComponent.WHEN_FOCUSED);
+            ActionMap am = atual.getActionMap();
+
+            // caso especial: JFormattedTextField -> commit, postActionEvent (se houver), e avançar
+            if (atual instanceof JFormattedTextField) {
+                final JFormattedTextField f = (JFormattedTextField) atual;
+                im.put(KeyStroke.getKeyStroke("ENTER"), "commitAndFireAndNext");
+                am.put("commitAndFireAndNext", new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            f.commitEdit(); // valida/commit do formatted field
+                        } catch (Exception ex) {
+                            // se não for válido, não avança
+                            return;
+                        }
+                        // dispara ActionListeners do campo (se houver)
+                        f.postActionEvent();
+                        proximo.requestFocusInWindow();
+                    }
+                });
+                continue;
+            }
+
+            // caso: JTextField que tem ActionListener -> dispara action e avança
+            if (atual instanceof JTextField) {
+                final JTextField tf = (JTextField) atual;
+                if (tf.getActionListeners().length > 0) {
+                    im.put(KeyStroke.getKeyStroke("ENTER"), "fireActionAndNext");
+                    am.put("fireActionAndNext", new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // dispara a action existente
+                            tf.postActionEvent();
+                            // avança o foco
+                            proximo.requestFocusInWindow();
+                        }
+                    });
+                    continue;
+                }
+            }
+
+            // caso padrão: apenas avança para o próximo componente
+            im.put(KeyStroke.getKeyStroke("ENTER"), "focarProximo");
+            am.put("focarProximo", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    proximo.requestFocusInWindow();
                 }
             });
         }

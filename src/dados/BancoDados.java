@@ -18,40 +18,53 @@ import java.util.HashMap;
  */
 public class BancoDados {
     
-    private static HashMap<String, Cliente> hashClientes = new HashMap<>();
-    private static HashMap<String, Funcionario> hashFuncionarios = new HashMap<>();
-    private static HashMap<String, Produto> hashProdutos = new HashMap<>();
-    private static HashMap<Integer, Venda> hashVendas = new HashMap<>();
+    private static HashMap<String, Cliente> hashmapClientes = new HashMap<String, Cliente>(){{
+        put("000.000.000-00", new Cliente("000.000.000-00", "Usuário Padrão", "Usuário Padrão", "Usuário Padrão"));
+    }};
+    private static HashMap<String, Funcionario> hashmapFuncionarios = new HashMap<String, Funcionario>(){{
+        put("000.000.000-01", new Funcionario("000.000.000-01", "Funcionário Padrão"));
+    }};
+    private static HashMap<String, Produto> hashmapProdutos = new HashMap<>();
+    private static HashMap<String, Produto> hashmapCarrinho = new HashMap<>();
+    private static HashMap<Integer, Venda> hashmapVendas = new HashMap<>();
 
-    public static HashMap<String, Cliente> getHashClientes() {
-        return hashClientes;
+    public static HashMap<String, Cliente> getHashmapClientes() {
+        return hashmapClientes;
     }
 
-    public static void setHashClientes(HashMap<String, Cliente> hashClientes) {
-        BancoDados.hashClientes = hashClientes;
+    public static void setHashmapClientes(HashMap<String, Cliente> hashmapClientes) {
+        BancoDados.hashmapClientes = hashmapClientes;
     }
 
-    public static HashMap<String, Funcionario> getHashFuncionarios() {
-        return hashFuncionarios;
+    public static HashMap<String, Funcionario> getHashmapFuncionarios() {
+        return hashmapFuncionarios;
     }
 
-    public static void setHashFuncionarios(HashMap<String, Funcionario> hashFuncionarios) {
-        BancoDados.hashFuncionarios = hashFuncionarios;
+    public static void setHashmapFuncionarios(HashMap<String, Funcionario> hashmapFuncionarios) {
+        BancoDados.hashmapFuncionarios = hashmapFuncionarios;
     }
 
-    public static HashMap<String, Produto> getHashProdutos() {
-        return hashProdutos;
+    public static HashMap<String, Produto> getHashmapProdutos() {
+        return hashmapProdutos;
     }
 
-    public static void setHashProdutos(HashMap<String, Produto> hashProdutos) {
-        BancoDados.hashProdutos = hashProdutos;
+    public static void setHashmapProdutos(HashMap<String, Produto> hashmapProdutos) {
+        BancoDados.hashmapProdutos = hashmapProdutos;
     }
 
-    public static HashMap<Integer, Venda> getHashVendas() {
-        return hashVendas;
+    public static HashMap<String, Produto> getHashmapCarrinho() {
+        return hashmapCarrinho;
     }
 
-    public static void setHashVendas(HashMap<Integer, Venda> hashVendas) {
-        BancoDados.hashVendas = hashVendas;
+    public static void setHashmapCarrinho(HashMap<String, Produto> hashmapCarrinho) {
+        BancoDados.hashmapCarrinho = hashmapCarrinho;
+    }
+
+    public static HashMap<Integer, Venda> getHashmapVendas() {
+        return hashmapVendas;
+    }
+
+    public static void setHashmapVendas(HashMap<Integer, Venda> hashmapVendas) {
+        BancoDados.hashmapVendas = hashmapVendas;
     }
 }

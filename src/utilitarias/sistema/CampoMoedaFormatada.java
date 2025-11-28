@@ -74,6 +74,11 @@ public class CampoMoedaFormatada extends JTextField {
         campo.setHorizontalAlignment(SwingConstants.CENTER);
     }
     
+    public static String formantarValor(Double valor) {
+        NumberFormat formato = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        return formato.format(valor);
+    }
+    
     public static double desformatarFormatoMoeda(String campo) {
         if (campo == null || campo.isEmpty()) return 0.0;
 

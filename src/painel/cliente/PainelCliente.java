@@ -33,7 +33,7 @@ public class PainelCliente extends javax.swing.JDialog {
      * Creates new form PainelCliente
      */
     
-    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashClientes();
+    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashmapClientes();
     private int linhaSelecionadaTabela;
     
     public PainelCliente(JFrame parent) {

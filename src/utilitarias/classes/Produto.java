@@ -15,6 +15,10 @@ public class Produto {
     private String descricao;
     private int quatidade;
     private String valorUnitario;
+    
+    public Produto(Produto produto) {
+        this(produto.getCodigo(), produto.getDescricao(), produto.getQuatidade(), produto.getValorUnitario());
+    }
 
     public Produto(String codigo, String descricao, int quatidade, String valorUnitario) {
         this.codigo = codigo;     

@@ -22,7 +22,7 @@ public class EditarProduto extends javax.swing.JDialog {
     /**
      * Creates new form EditarProduto
      */
-    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashProdutos();
+    HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashmapProdutos();
     Produto produto;
     
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{

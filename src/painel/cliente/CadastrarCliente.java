@@ -28,7 +28,7 @@ public class CadastrarCliente extends javax.swing.JDialog {
      * Creates new form CadastrarCliente
      */
     
-    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashClientes();
+    HashMap<String, Cliente> listaClientesHashMap = BancoDados.getHashmapClientes();
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
         put("F1", () -> adicionarCliente());
         put("F2", () -> sairPainelCadastro());
@@ -42,6 +42,17 @@ public class CadastrarCliente extends javax.swing.JDialog {
         
         ControleAtalhos.addKeyBindings(getRootPane(), atalhos);
         ControleAtalhos.passadorDeCampoComEnter(jfCPF, jtNome, jfTelefone, jtaEndereco, btnCadastrar);
+    }
+    
+    public CadastrarCliente(JFrame parent, String cpf) {
+        super(parent, true);
+        initComponents();
+        
+        setLocationRelativeTo(null);
+        
+        ControleAtalhos.addKeyBindings(getRootPane(), atalhos);
+        ControleAtalhos.passadorDeCampoComEnter(jfCPF, jtNome, jfTelefone, jtaEndereco, btnCadastrar);
+        jfCPF.setText(cpf);
     }
     
     private void limparCampos() {

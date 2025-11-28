@@ -21,7 +21,7 @@ public class EditarFuncionario extends javax.swing.JDialog {
     /**
      * Creates new form EditarFuncionario
      */
-    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashFuncionarios();
+    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashmapFuncionarios();
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
         put("F1", () -> sairPainelEditar());
         put("F2", () -> sairPainelEditar());

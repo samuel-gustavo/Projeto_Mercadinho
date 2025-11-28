@@ -27,7 +27,7 @@ public class CadastrarFuncionario extends javax.swing.JDialog {
     /**
      * Creates new form CadastrarFuncionario
      */
-    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashFuncionarios();
+    HashMap<String, Funcionario> listaFuncionariosHashMap = BancoDados.getHashmapFuncionarios();
     HashMap<String, Runnable> atalhos = new HashMap<String, Runnable>() {{
         put("F1", () -> sairPainelCadastro());
         put("F2", () -> sairPainelCadastro());

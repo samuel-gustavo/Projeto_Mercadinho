@@ -6,6 +6,7 @@
 package utilitarias.classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -13,26 +14,19 @@ import java.util.ArrayList;
  */
 public class Venda {
     
+    private static int proximoID = 1;
     private int id;
     private Cliente cliente;
     private Funcionario funcionario;
-    private ArrayList<Produto> listaProdutos;
+    private String valorTotal;
+    private HashMap<String, Produto> listaProdutosComprados;
 
-    public Venda(int id, Cliente cliente, ArrayList<Produto> listaProdutos) {
-        this.id = id;
-        this.cliente = cliente;
-        this.listaProdutos = listaProdutos;
+    public Venda(String valorTotal, HashMap<String, Produto> listaProdutosComprados) {
+        this.id = proximoID++;
+        this.valorTotal = valorTotal;
+        this.listaProdutosComprados = listaProdutosComprados;
     }
     
-    public Venda(int id, Cliente cliente) {
-        this.id = id;
-        this.cliente = cliente;
-    }
-    
-    public Venda(ArrayList<Produto> listaProdutos) {
-        this.listaProdutos = listaProdutos;
-    }
-
     public int getId() {
         return id;
     }
@@ -49,19 +43,27 @@ public class Venda {
         this.cliente = cliente;
     }
 
-    public ArrayList<Produto> getListaProdutos() {
-        return listaProdutos;
-    }
-
-    public void setListaProdutos(ArrayList<Produto> listaProdutos) {
-        this.listaProdutos = listaProdutos;
-    }
-
     public Funcionario getFuncionario() {
         return funcionario;
     }
 
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
+    }
+
+    public String getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(String valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public HashMap<String, Produto> getListaProdutosComprados() {
+        return listaProdutosComprados;
+    }
+
+    public void setListaProdutosComprados(HashMap<String, Produto> listaProdutosComprados) {
+        this.listaProdutosComprados = listaProdutosComprados;
     }
 }

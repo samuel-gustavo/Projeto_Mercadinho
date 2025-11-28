@@ -37,6 +37,11 @@ public class Funcionario {
 
     @Override
     public String toString() {
-        return nome; //To change body of generated methods, choose Tools | Templates.
+        int maximoCaracteres = 26;
+        if (nome.length() <= maximoCaracteres) {
+            return nome;
+        } else {
+            return nome.substring(0, maximoCaracteres - 3) + "...";
+        }
     }
 }

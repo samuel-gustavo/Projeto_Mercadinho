@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import utilitarias.classes.Produto;
 
 /**
  *
@@ -36,5 +37,17 @@ public class FuncoesNaTabela {
         jtextField.setText("" + hashmap.size());
         arrayList.clear();
         arrayList.addAll(hashmap.values());
+    }
+    
+    public static <K, V> void informarQuantidadeEPreencharArrayListDaTabela(Map<K, V> hashmap, List<V> arrayList) {
+        arrayList.clear();
+        arrayList.addAll(hashmap.values());
+    }
+    
+    public static String somarValoresDaTabelaCarrinho(Map<String, Produto> hashmap) {
+        double valorTotal = hashmap.values().stream()
+                            .mapToDouble(p -> CampoMoedaFormatada.desformatarFormatoMoeda(p.getValorUnitario()) * p.getQuatidade())
+                            .sum();
+        return CampoMoedaFormatada.formantarValor(valorTotal);
     }
 }
