@@ -19,8 +19,11 @@ public class Venda {
     private Cliente cliente;
     private Funcionario funcionario;
     private String valorTotal;
+    private String tipoDePagamento;
     private HashMap<String, Produto> listaProdutosComprados;
 
+    public Venda() {}
+    
     public Venda(String valorTotal, HashMap<String, Produto> listaProdutosComprados) {
         this.id = proximoID++;
         this.valorTotal = valorTotal;
@@ -33,6 +36,14 @@ public class Venda {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+     public String getTipoDePagamento() {
+        return tipoDePagamento;
+    }
+
+    public void setTipoDePagamento(String tipoDePagamento) {
+        this.tipoDePagamento = tipoDePagamento;
     }
 
     public Cliente getCliente() {

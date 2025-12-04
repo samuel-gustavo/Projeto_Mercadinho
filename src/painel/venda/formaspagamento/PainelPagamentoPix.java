@@ -5,13 +5,16 @@
  */
 package painel.venda.formaspagamento;
 
+import dados.BancoDados;
 import java.io.File;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import utilitarias.classes.Produto;
 import utilitarias.classes.Venda;
 import utilitarias.sistema.CampoMoedaFormatada;
 import utilitarias.sistema.ControleAtalhos;
@@ -26,6 +29,9 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
     /**
      * Creates new form PainelPagamentoPix
      */
+    HashMap<String, Produto> listaProdutoshasMap = BancoDados.getHashmapProdutos();
+    HashMap<String, Produto> listaCarrinhohashMap = BancoDados.getHashmapCarrinho();
+    Venda venda;
     String caminhoImagem = "/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/icons/pix.png";
     
     public PainelPagamentoPix(JFrame parent, Venda venda) {
@@ -33,6 +39,7 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
         initComponents();
         
         setLocationRelativeTo(null);
+        this.venda = venda;
         
         // Dados para gerar o Payload:
         String chave = "84986195830"; // Chave de telefone
@@ -51,12 +58,20 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
         }
         jtValortotal.setText(venda.getValorTotal());
         colocarQRCodeNoLabel(jlQRcodePix);
-        System.out.println(payload);
         
         ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> {
-            verificarPagamentoConcluido();
+            concluirPagamento();
+            for(Produto carrinho: listaCarrinhohashMap.values()) {
+                Produto produto = listaProdutoshasMap.get(carrinho.getCodigo());
+                produto.setQuatidade(produto.getQuatidade() - carrinho.getQuatidade());
+                listaProdutoshasMap.put(carrinho.getCodigo(), produto);
+            }
+            this.venda.setTipoDePagamento("Pix");
+            listaCarrinhohashMap.clear();
             dispose();
         });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> dispose());
     }
     
     private void colocarQRCodeNoLabel(JLabel jlabel) {
@@ -64,7 +79,7 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
         jlabel.setIcon(imageIcon);
     }
     
-    private void verificarPagamentoConcluido() {
+    private void concluirPagamento() {
         File imagem = new File(caminhoImagem);
         if(imagem.exists()) {
             imagem.delete();
@@ -162,6 +177,7 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -170,22 +186,7 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
         jlQRcodePix.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jPanel4.add(jlQRcodePix, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 400, 400));
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(145, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(143, 143, 143))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+        jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 15, 420, 420));
 
         jPanel3.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 139, 710, 450));
 

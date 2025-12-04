@@ -14,6 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import painel.cliente.CadastrarCliente;
+import painel.venda.formaspagamento.PainelPagamentoCartao;
+import painel.venda.formaspagamento.PainelPagamentoDinheiro;
 import painel.venda.formaspagamento.PainelPagamentoPix;
 import utilitarias.classes.Cliente;
 import utilitarias.classes.Funcionario;
@@ -34,8 +36,7 @@ public class EfetuarVenda extends javax.swing.JDialog {
     HashMap<String, Produto> listaCarrinhohashMap = BancoDados.getHashmapCarrinho();
     HashMap<String, Cliente> listaClienteshashMap = BancoDados.getHashmapClientes();
     HashMap<String, Funcionario> listaFuncionarioshashMap = BancoDados.getHashmapFuncionarios();
-    
-    private Venda venda;
+    Venda venda;
     
     public EfetuarVenda(JFrame parent, Venda venda) {
         super(parent, true);
@@ -43,24 +44,27 @@ public class EfetuarVenda extends javax.swing.JDialog {
         
         setLocationRelativeTo(null);
         this.venda = venda;
+        this.venda.setCliente(null);
+        this.venda.setFuncionario(null);
         
         iniciarTela();
         
         ControleAtalhos.passadorDeCampoComEnter(jfCPFCliente, jcFuncionario);
         
         ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> {
-            if(verificarPossivelVenda()) {
-                PainelPagamentoPix painelPagamentoPix = new PainelPagamentoPix(new JFrame(), venda);
-                painelPagamentoPix.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        
-                    }
-                });
-                painelPagamentoPix.setVisible(true); 
-            } else {
-                JOptionPane.showMessageDialog(null, "Preencha todos os campos para poder efetuar o pagamento!");
-            }
+            pagarComPix();
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> {
+            pagarComCartao();
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> {
+            pagarComDinheiro();
+        });
+        
+        ControleAtalhos.addKeyBinding(getRootPane(), "F4", () -> {
+            sairPainelEfetuarVenda();
         });
     }
     
@@ -107,10 +111,40 @@ public class EfetuarVenda extends javax.swing.JDialog {
         Funcionario funcionario = (Funcionario) jcFuncionario.getSelectedItem();
         Cliente cliente = listaClienteshashMap.get(jfCPFCliente.getText());
         if(funcionario != null && cliente != null) {
+            this.venda.setCliente(cliente);
+            this.venda.setFuncionario(funcionario);
             return true;
         } else {
             return false;
         }
+    }
+    
+    private void pagarComPix() {
+        if(verificarPossivelVenda()) {
+            new PainelPagamentoPix(new JFrame(), venda).setVisible(true); 
+        } else {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos para poder efetuar o pagamento!");
+        }
+    }
+    
+    private void pagarComCartao() {
+        if(verificarPossivelVenda()) {
+            new PainelPagamentoCartao(new JFrame(), venda).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos para poder efetuar o pagamento!");
+        }
+    }
+    
+    private void pagarComDinheiro() {
+        if(verificarPossivelVenda()) {
+            new PainelPagamentoDinheiro(new JFrame(), venda).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos para poder efetuar o pagamento!");
+        }
+    }
+    
+    private void sairPainelEfetuarVenda() {
+        dispose();
     }
 
     /**
@@ -142,13 +176,13 @@ public class EfetuarVenda extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         jPanel16 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        btnCadastrar1 = new javax.swing.JButton();
-        btnCadastrar2 = new javax.swing.JButton();
-        btnCadastrar3 = new javax.swing.JButton();
+        btnPagamentoPix = new javax.swing.JButton();
+        btnPagamentoCartao = new javax.swing.JButton();
+        btnPagamentoDinheiro = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
-        btnCadastrar = new javax.swing.JButton();
+        btnSair = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -274,41 +308,41 @@ public class EfetuarVenda extends javax.swing.JDialog {
 
         jPanel4.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 40));
 
-        btnCadastrar1.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar1.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_pix (1).png"))); // NOI18N
-        btnCadastrar1.setText("Pix");
-        btnCadastrar1.setBorder(null);
-        btnCadastrar1.addActionListener(new java.awt.event.ActionListener() {
+        btnPagamentoPix.setBackground(new java.awt.Color(102, 153, 0));
+        btnPagamentoPix.setForeground(new java.awt.Color(255, 255, 255));
+        btnPagamentoPix.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_pix (1).png"))); // NOI18N
+        btnPagamentoPix.setText("Pix");
+        btnPagamentoPix.setBorder(null);
+        btnPagamentoPix.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrar1ActionPerformed(evt);
+                btnPagamentoPixActionPerformed(evt);
             }
         });
-        jPanel4.add(btnCadastrar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 120, 40));
+        jPanel4.add(btnPagamentoPix, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 120, 40));
 
-        btnCadastrar2.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar2.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_cartao (1).png"))); // NOI18N
-        btnCadastrar2.setText("Cartão");
-        btnCadastrar2.setBorder(null);
-        btnCadastrar2.addActionListener(new java.awt.event.ActionListener() {
+        btnPagamentoCartao.setBackground(new java.awt.Color(102, 153, 0));
+        btnPagamentoCartao.setForeground(new java.awt.Color(255, 255, 255));
+        btnPagamentoCartao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_cartao (1).png"))); // NOI18N
+        btnPagamentoCartao.setText("Cartão");
+        btnPagamentoCartao.setBorder(null);
+        btnPagamentoCartao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrar2ActionPerformed(evt);
+                btnPagamentoCartaoActionPerformed(evt);
             }
         });
-        jPanel4.add(btnCadastrar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 120, 40));
+        jPanel4.add(btnPagamentoCartao, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 120, 40));
 
-        btnCadastrar3.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar3.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_dinheiro (1).png"))); // NOI18N
-        btnCadastrar3.setText("Dinheiro");
-        btnCadastrar3.setBorder(null);
-        btnCadastrar3.addActionListener(new java.awt.event.ActionListener() {
+        btnPagamentoDinheiro.setBackground(new java.awt.Color(102, 153, 0));
+        btnPagamentoDinheiro.setForeground(new java.awt.Color(255, 255, 255));
+        btnPagamentoDinheiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/imagem_dinheiro (1).png"))); // NOI18N
+        btnPagamentoDinheiro.setText("Dinheiro");
+        btnPagamentoDinheiro.setBorder(null);
+        btnPagamentoDinheiro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrar3ActionPerformed(evt);
+                btnPagamentoDinheiroActionPerformed(evt);
             }
         });
-        jPanel4.add(btnCadastrar3, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 80, 120, 40));
+        jPanel4.add(btnPagamentoDinheiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 80, 120, 40));
 
         jTextField1.setEditable(false);
         jTextField1.setBackground(new java.awt.Color(255, 255, 255));
@@ -337,13 +371,13 @@ public class EfetuarVenda extends javax.swing.JDialog {
         jTextField3.setBorder(null);
         jPanel4.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 50, 120, 30));
 
-        btnCadastrar.setBackground(new java.awt.Color(102, 153, 0));
-        btnCadastrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCadastrar.setText("Sair (F4)");
-        btnCadastrar.setBorder(null);
-        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+        btnSair.setBackground(new java.awt.Color(102, 153, 0));
+        btnSair.setForeground(new java.awt.Color(255, 255, 255));
+        btnSair.setText("Sair (F4)");
+        btnSair.setBorder(null);
+        btnSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrarActionPerformed(evt);
+                btnSairActionPerformed(evt);
             }
         });
 
@@ -365,7 +399,7 @@ public class EfetuarVenda extends javax.swing.JDialog {
                 .addGap(69, 69, 69))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(356, 356, 356)
-                .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -381,7 +415,7 @@ public class EfetuarVenda extends javax.swing.JDialog {
                 .addGap(34, 34, 34)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -398,27 +432,27 @@ public class EfetuarVenda extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jtNomeClienteActionPerformed
 
-    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
-    }//GEN-LAST:event_btnCadastrarActionPerformed
+    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
+        sairPainelEfetuarVenda();
+    }//GEN-LAST:event_btnSairActionPerformed
 
-    private void btnCadastrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCadastrar1ActionPerformed
+    private void btnPagamentoPixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagamentoPixActionPerformed
+        pagarComPix();
+    }//GEN-LAST:event_btnPagamentoPixActionPerformed
 
-    private void btnCadastrar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrar2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCadastrar2ActionPerformed
+    private void btnPagamentoCartaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagamentoCartaoActionPerformed
+        pagarComCartao();
+    }//GEN-LAST:event_btnPagamentoCartaoActionPerformed
 
-    private void btnCadastrar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrar3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCadastrar3ActionPerformed
+    private void btnPagamentoDinheiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagamentoDinheiroActionPerformed
+        pagarComDinheiro();
+    }//GEN-LAST:event_btnPagamentoDinheiroActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCadastrar;
-    private javax.swing.JButton btnCadastrar1;
-    private javax.swing.JButton btnCadastrar2;
-    private javax.swing.JButton btnCadastrar3;
+    private javax.swing.JButton btnPagamentoCartao;
+    private javax.swing.JButton btnPagamentoDinheiro;
+    private javax.swing.JButton btnPagamentoPix;
+    private javax.swing.JButton btnSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;

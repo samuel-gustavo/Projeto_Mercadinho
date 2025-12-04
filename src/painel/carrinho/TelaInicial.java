@@ -55,9 +55,11 @@ public class TelaInicial extends javax.swing.JFrame {
      */
     HashMap<String, Produto> listaProdutosHashMap = BancoDados.getHashmapProdutos();
     HashMap<String, Produto> listaCarrinhohashMap = BancoDados.getHashmapCarrinho();
+    HashMap<Integer, Venda> listaVendashashmap = BancoDados.getHashmapVendas();
     
     List<Produto> listaCarrinhoArrayList = new ArrayList<>(listaCarrinhohashMap.values());
     
+    Venda venda = null;
     Produto produtoPesquisado = null;
     private int linhaSelecionadaTabela;
     private String opcao = "cadastrar";
@@ -116,13 +118,84 @@ public class TelaInicial extends javax.swing.JFrame {
         
         ControleAtalhos.addKeyBinding(getRootPane(), "F1", () -> jtCodigoProduto.requestFocus());
         
-        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> JOptionPane.showMessageDialog(null, "Cancelar Venda! : )"));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F2", () -> {
+            int resposta = JOptionPane.showConfirmDialog(null, "Deseja mesmo cancelar essa Venda?", "Cancerlar Venda", JOptionPane.YES_NO_OPTION);
+            if(resposta == JOptionPane.YES_OPTION) {
+                listaCarrinhoArrayList.clear();
+                listaCarrinhohashMap.clear();
+                CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, p -> new Object[] {
+                    p.getCodigo(),
+                    p.getDescricao(),
+                    p.getQuatidade(),
+                    p.getValorUnitario()
+                });
+                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                FuncoesCamposTexto.filtarItem(jtProdutosVenda, jtCodigoProduto, listaProdutosHashMap, "int");
+                jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+            }
+        });
         
         ControleAtalhos.addKeyBinding(getRootPane(), "F3", () -> {
             if(listaCarrinhohashMap.size() > 0) {
-                Venda venda = new Venda(jtValortotal.getText(), listaCarrinhohashMap);
-                EfetuarVenda efetuarVenda = new EfetuarVenda(this, venda);
-                efetuarVenda.setVisible(true);
+                EfetuarVenda efetuarVenda = null;
+                if(this.venda == null) {
+                    this.venda = new Venda(jtValortotal.getText(), listaCarrinhohashMap);
+                    efetuarVenda = new EfetuarVenda(this, this.venda);
+                    efetuarVenda.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                            boolean vendaFinalizada = venda.getTipoDePagamento() != null;
+                            if(vendaFinalizada) {
+                                CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProdutosVenda, p -> new Object[] {
+                                    p.getCodigo(),
+                                    p.getDescricao(),
+                                    p.getQuatidade()
+                                });
+                                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList);
+                                CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, p -> new Object[] {
+                                    p.getCodigo(),
+                                    p.getDescricao(),
+                                    p.getQuatidade(),
+                                    p.getValorUnitario()
+                                });
+                                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                                FuncoesCamposTexto.filtarItem(jtProdutosVenda, jtCodigoProduto, listaProdutosHashMap, "int");
+                                jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+                            }
+                            listaVendashashmap.put(venda.getId(), venda);
+                            venda = null;
+                        }
+                    });
+                    efetuarVenda.setVisible(true);
+                } else if(this.venda != null && this.venda.getTipoDePagamento() == null) {
+                    efetuarVenda = new EfetuarVenda(this, this.venda);
+                    efetuarVenda.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                            boolean vendaFinalizada = venda.getTipoDePagamento() != null;
+                            if(vendaFinalizada) {
+                                CRUDHashMap.preencherTabela(listaProdutosHashMap, jtProdutosVenda, p -> new Object[] {
+                                    p.getCodigo(),
+                                    p.getDescricao(),
+                                    p.getQuatidade()
+                                });
+                                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaProdutosHashMap, listaProdutosArrayList);
+                                CRUDHashMap.preencherTabela(listaCarrinhohashMap, jtCarrinho, p -> new Object[] {
+                                    p.getCodigo(),
+                                    p.getDescricao(),
+                                    p.getQuatidade(),
+                                    p.getValorUnitario()
+                                });
+                                FuncoesNaTabela.informarQuantidadeEPreencharArrayListDaTabela(listaCarrinhohashMap, listaCarrinhoArrayList);
+                                FuncoesCamposTexto.filtarItem(jtProdutosVenda, jtCodigoProduto, listaProdutosHashMap, "int");
+                                jtValortotal.setText(FuncoesNaTabela.somarValoresDaTabelaCarrinho(listaCarrinhohashMap));
+                                listaVendashashmap.put(venda.getId(), venda);
+                                venda = null;
+                            }
+                        }
+                    });
+                    efetuarVenda.setVisible(true);
+                } 
             } else {
                 JOptionPane.showMessageDialog(null, "Adicione pelo menos um item no Carrinho para realizar a Venda!");
             }
@@ -409,8 +482,9 @@ public class TelaInicial extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(51, 102, 0));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Caixa Aberto");
-        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 25, -1, -1));
+        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 4, 1280, 70));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 1280, 80));
 
@@ -656,7 +730,6 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel20.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jtValorUnitario.setEditable(false);
-        jtValorUnitario.setBackground(new java.awt.Color(255, 255, 255));
         jtValorUnitario.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jtValorUnitario.setForeground(new java.awt.Color(51, 102, 0));
         jtValorUnitario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -722,17 +795,16 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel22.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jtValortotal.setEditable(false);
-        jtValortotal.setBackground(new java.awt.Color(255, 255, 255));
-        jtValortotal.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jtValortotal.setFont(new java.awt.Font("Dialog", 1, 26)); // NOI18N
         jtValortotal.setForeground(new java.awt.Color(51, 102, 0));
         jtValortotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jtValortotal.setText("R$ 0,00");
         jtValortotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel22.add(jtValortotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 70));
+        jPanel22.add(jtValortotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 80));
 
-        jPanel14.add(jPanel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 70));
+        jPanel14.add(jPanel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 80));
 
-        jPanel2.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 690, 110));
+        jPanel2.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 480, 690, 120));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
