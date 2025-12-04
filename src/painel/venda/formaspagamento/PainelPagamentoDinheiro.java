@@ -45,6 +45,7 @@ public class PainelPagamentoDinheiro extends javax.swing.JDialog {
                 listaProdutoshasMap.put(carrinho.getCodigo(), produto);
             }
             this.venda.setTipoDePagamento("Dinheiro");
+            this.venda.setData();
             listaCarrinhohashMap.clear();
             dispose();
         });

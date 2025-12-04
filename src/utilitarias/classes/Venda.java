@@ -5,7 +5,9 @@
  */
 package utilitarias.classes;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -21,6 +23,7 @@ public class Venda {
     private String valorTotal;
     private String tipoDePagamento;
     private HashMap<String, Produto> listaProdutosComprados;
+    private String data;
 
     public Venda() {}
     
@@ -76,5 +79,15 @@ public class Venda {
 
     public void setListaProdutosComprados(HashMap<String, Produto> listaProdutosComprados) {
         this.listaProdutosComprados = listaProdutosComprados;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData() {
+        Date data = new Date();
+        SimpleDateFormat formatoData = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        this.data = formatoData.format(data);
     }
 }

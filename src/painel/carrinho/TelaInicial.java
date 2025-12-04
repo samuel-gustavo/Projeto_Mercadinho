@@ -36,6 +36,7 @@ import modelos.ModeloTabela;
 import painel.cliente.PainelCliente;
 import painel.funcionario.PainelFuncionario;
 import painel.carrinho.PainelCarrinho;
+import painel.historicovendas.HistoricoVendas;
 import painel.venda.EfetuarVenda;
 import utilitarias.sistema.CRUDHashMap;
 import utilitarias.sistema.CampoMoedaFormatada;
@@ -247,7 +248,8 @@ public class TelaInicial extends javax.swing.JFrame {
         });
         ControleAtalhos.addKeyBinding(getRootPane(), "F7", () -> new PainelFuncionario(this).setVisible(true));
         ControleAtalhos.addKeyBinding(getRootPane(), "F8", () -> new PainelCliente(this).setVisible(true));
-        ControleAtalhos.addKeyBinding(getRootPane(), "F9", () -> dispose());
+        ControleAtalhos.addKeyBinding(getRootPane(), "F9", () -> new HistoricoVendas(this).setVisible(true));
+        ControleAtalhos.addKeyBinding(getRootPane(), "F10", () -> dispose());
         
         FuncoesCamposTexto.pesquisaCampoTexto(jtProdutosVenda, jtCodigoProduto, listaProdutosHashMap, "int");
     }
@@ -406,6 +408,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jPanel17 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -575,8 +578,8 @@ public class TelaInicial extends javax.swing.JFrame {
         jPanel5.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, -1, -1));
 
         jLabel17.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        jLabel17.setText("F9- Sair do Sistema");
-        jPanel5.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 50, -1, -1));
+        jLabel17.setText("F9- Histórico Vendas");
+        jPanel5.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 40, -1, -1));
 
         jLabel18.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel18.setText("F2- Cancelar Venda");
@@ -637,6 +640,10 @@ public class TelaInicial extends javax.swing.JFrame {
         jLabel25.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
         jLabel25.setText("F4- Editar item");
         jPanel5.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        jLabel21.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel21.setText("F10- Sair do Sistema");
+        jPanel5.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 70, -1, -1));
 
         jPanel2.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 480, 570, 120));
 
@@ -829,7 +836,7 @@ public class TelaInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jlImagemCactoyceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlImagemCactoyceMouseClicked
-        ImageIcon imagem = new ImageIcon("/home/samuel/Documentos/Programacao/Cursos_Programacao/Curso_TADS_IFRN_2025/Programacao_Orientacao_Objetos_Java/Projetos/Netbeans/GerenciamentoDeEstoque/src/icons/Cactoyce.png");
+        ImageIcon imagem = new ImageIcon(getClass().getResource("/icons/Cactoyce.png"));
         JOptionPane.showMessageDialog(null, "", "Cactoyce --> Dona do Negócio", JOptionPane.INFORMATION_MESSAGE, imagem);
     }//GEN-LAST:event_jlImagemCactoyceMouseClicked
 
@@ -886,6 +893,7 @@ public class TelaInicial extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;

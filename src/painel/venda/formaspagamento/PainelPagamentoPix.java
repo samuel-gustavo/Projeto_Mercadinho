@@ -67,6 +67,7 @@ public class PainelPagamentoPix extends javax.swing.JDialog {
                 listaProdutoshasMap.put(carrinho.getCodigo(), produto);
             }
             this.venda.setTipoDePagamento("Pix");
+            this.venda.setData();
             listaCarrinhohashMap.clear();
             dispose();
         });

@@ -40,6 +40,7 @@ public class PainelPagamentoCartao extends javax.swing.JDialog {
                 listaProdutoshasMap.put(carrinho.getCodigo(), produto);
             }
             this.venda.setTipoDePagamento("Cartão");
+            this.venda.setData();
             listaCarrinhohashMap.clear();
             dispose();
         });
